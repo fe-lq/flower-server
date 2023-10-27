@@ -1,0 +1,35 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  user_id   Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  user_name String  @db.VarChar(45)
+  password  String  @db.VarChar(45)
+  phone     String  @unique(map: "phone_UNIQUE") @db.VarChar(45)
+  status    Boolean @default(false)
+}
+
+model goods {
+  goods_id         Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  goods_name       String   @db.VarChar(45)
+  goods_price      String   @db.VarChar(45)
+  goods_amount     Int?     @default(0)
+  goods_imgs       Json?
+  goods_type       Int
+  goods_on_sale    Boolean? @default(false)
+  goods_desc       String?  @db.VarChar(45)
+  goods_comments   Json?
+  goods_sell_count Int?
+  goods_is_del     Boolean? @default(false)
+}
+
+model goods_types {
+  id   Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  type String @unique(map: "type_UNIQUE") @db.VarChar(45)
+}

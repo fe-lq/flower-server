@@ -1,16 +1,12 @@
-import koa from "koa";
-import Logger from "koa-logger";
+import Koa from "koa";
 import body from "koa-body";
-import Moment from "moment";
 import router from "../routers";
+import { httpLog } from "../middleware";
 
-const app = new koa();
-const logger = Logger((msg) =>
-  console.log(Moment().format("YYYY-MM-DD HH:mm:ss") + msg)
-);
+const app = new Koa();
 
 app.use(body());
-app.use(logger);
+app.use(httpLog);
 
 app.use(router.routes());
 
