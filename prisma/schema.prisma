@@ -3,33 +3,56 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
-model users {
-  user_id   Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  user_name String  @db.VarChar(45)
-  password  String  @db.VarChar(45)
-  phone     String  @unique(map: "phone_UNIQUE") @db.VarChar(45)
-  status    Boolean @default(false)
+model Users {
+  userId   Int     @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("user_id")
+  userName String  @map("user_name") @db.VarChar(45)
+  password String  @db.VarChar(45)
+  phone    String  @unique(map: "phone_UNIQUE") @db.VarChar(45)
+  status   Boolean @default(false)
+  role     Role    @default(USER)
+
+  @@map("users")
 }
 
-model goods {
-  goods_id         Int      @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  goods_name       String   @db.VarChar(45)
-  goods_price      String   @db.VarChar(45)
-  goods_amount     Int?     @default(0)
-  goods_imgs       Json?
-  goods_type       Int
-  goods_on_sale    Boolean? @default(false)
-  goods_desc       String?  @db.VarChar(45)
-  goods_comments   Json?
-  goods_sell_count Int?
-  goods_is_del     Boolean? @default(false)
+model Goods {
+  id             Int       @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("goods_id")
+  goodsName      String    @map("goods_name") @db.VarChar(45)
+  goodsPrice     String    @map("goods_price") @db.VarChar(45)
+  goodsAmount    Int?      @default(0) @map("goods_amount")
+  goodsImgs      String    @map("goods_imgs")
+  goodsType      Int       @map("goods_type")
+  goodsOnSale    Boolean?  @default(false) @map("goods_on_sale")
+  goodsDesc      String?   @map("goods_desc") @db.VarChar(45)
+  goodsComments  Comment[]
+  goodsSellCount Int?      @map("goods_sell_count")
+  goodsIsDel     Boolean?  @default(false) @map("goods_is_del")
+
+  @@map("goods")
 }
 
-model goods_types {
+model GoodsTypes {
   id   Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
   type String @unique(map: "type_UNIQUE") @db.VarChar(45)
+
+  @@map("goods_types")
+}
+
+model Comment {
+  author   Goods  @relation(fields: [authorId], references: [id])
+  authorId Int
+  id       Int    @id @default(autoincrement())
+  content  String
+
+  @@index([authorId])
+  @@map("comment")
+}
+
+enum Role {
+  ADMIN
+  USER
 }

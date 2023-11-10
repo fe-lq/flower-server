@@ -1,7 +1,10 @@
-import db from "../db";
-
+import db, { Users } from "../db";
 class GoodsServers {
-  getUsers = async (username: string) =>
-    db.users.findMany({ where: { user_name: username } });
+  getUsers = async (userName: string): Promise<Users[]> =>
+    db.users.findMany({
+      // where: { userName },
+      // select: { phone: true },
+      take: 2,
+    });
 }
 export const goodsServers = new GoodsServers();

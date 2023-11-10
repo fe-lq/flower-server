@@ -5,6 +5,7 @@ const prisma = new PrismaClient({
   errorFormat: "pretty",
 });
 
+// 注册全局的监听日志
 prisma.$on("error", (e) => {
   dbLogger.error(e);
 });

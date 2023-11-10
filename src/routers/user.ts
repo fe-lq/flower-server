@@ -7,6 +7,7 @@ import { userController } from "../controller/user";
 export const router = new Router({ prefix: "/users" });
 
 router.post("/register", userController.register);
+router.post("/login", userController.login);
 
 // router.post("/login", userController.register);
 // router.post("/logout", userController.register);

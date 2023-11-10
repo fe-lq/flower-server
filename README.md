@@ -1,10 +1,10 @@
-# flower-admin服务端
+# flower-admin 服务端
 
-基于Koa + Typescript + Mysql 创建
+基于 Koa + Typescript + Mysql 创建
 
 ## 安装环境
 
-首先要安装node
+首先要安装 node
 
 ```sh
   npm i -g pnpm
@@ -20,4 +20,13 @@
 
 ```sh
   pnpm start
+```
+
+### 密钥生成方法
+
+```sh
+#生成私钥
+openssl genrsa -out private_key.pem 1024
+#生成私钥对应的共钥
+openssl rsa -in private_key.pem -pubout -out public_key.pem
 ```

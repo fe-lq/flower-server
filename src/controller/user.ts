@@ -1,41 +1,38 @@
 import type Koa from "koa";
 import { userServers } from "../services/user";
-import { Prisma } from "@prisma/client";
-import { logger } from "../logs";
-import { HeadFieldConfig } from "../constants";
+import { cipherDecipher } from "../utils/cipher-decipher";
+import { handlerError } from "../utils/error";
 
 class UserController {
   async register(ctx: Koa.Context) {
     const requestParams = ctx.request.body;
     try {
-      await userServers.register(requestParams);
+      const { pwdHex } = cipherDecipher.encryptionPwd(requestParams.password);
+      console.log(pwdHex, "密码");
+
+      await userServers.register({ ...requestParams, password: pwdHex });
       ctx.body = {
         code: 0,
-        message: "用户登录成功",
+        message: "success",
       };
-      ctx.response.status = 201;
+      ctx.response.status = 200;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        const { code, meta } = error;
-        if (code === "P2002") {
-          const field = (meta.target as string).split("_")[0];
-          ctx.body = {
-            code: -1,
-            message: `${field}已存在`,
-          };
-          ctx.response.status = 404;
-        }
-      } else {
-        ctx.body = {
-          code: -1,
-          message: `error request`,
-        };
-        ctx.response.status = 404;
-      }
-      logger.error({
-        requestId: ctx.request.header[HeadFieldConfig.REQUEST_ID],
-        errorInfo: error,
-      });
+      handlerError(ctx, error);
+    }
+  }
+
+  async login(ctx: Koa.Context) {
+    const { password, phone } = ctx.request.body;
+    try {
+      const data = await userServers.login({ password, phone });
+      ctx.body = {
+        code: 0,
+        data,
+        message: "success",
+      };
+      ctx.status = 200;
+    } catch (error) {
+      handlerError(ctx, error);
     }
   }
 }
