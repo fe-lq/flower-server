@@ -22,10 +22,10 @@ export const httpLog = async (ctx: Koa.Context, next: Koa.Next) => {
  * @param next
  */
 export const setHttpHeader = async (ctx: Koa.Context, next: Koa.Next) => {
-  ctx.verifyParams();
+  // ctx.verifyParams();
   ctx.set({
     "Access-Control-Allow-Origin": "http://localhost:8080",
-    "Access-Control-Allow-Headers": "Origin, Content-Type",
+    "Access-Control-Allow-Headers": "Origin, Content-Type, X-Requested-With",
     "Access-Control-Allow-Credentials": "true", // 允许携带cookie
     "Access-Control-Max-Age": "3600", // 预检请求有效期1小时
     "X-Request-Id": uuid(),
