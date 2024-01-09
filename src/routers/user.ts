@@ -1,12 +1,18 @@
 import Router from "koa-router";
 import { userController } from "../controller/user";
+import { genVerifyParams } from "../middleware/validator-middle";
+import { addUserSchema } from "../constants/validate-rules";
 
 /**
  * 用户接口路由
  */
 export const router = new Router({ prefix: "/users" });
 
-router.post("/register", userController.register);
+router.post(
+  "/register",
+  genVerifyParams(addUserSchema),
+  userController.register
+);
 router.post("/login", userController.login);
 
 // router.post("/login", userController.register);

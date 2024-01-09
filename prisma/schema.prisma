@@ -28,9 +28,9 @@ model Goods {
   goodsType      Int       @map("goods_type")
   goodsOnSale    Boolean?  @default(false) @map("goods_on_sale")
   goodsDesc      String?   @map("goods_desc") @db.VarChar(45)
-  goodsComments  Comment[]
   goodsSellCount Int?      @map("goods_sell_count")
   goodsIsDel     Boolean?  @default(false) @map("goods_is_del")
+  goodsComments  Comment[]
 
   @@map("goods")
 }
@@ -43,13 +43,27 @@ model GoodsTypes {
 }
 
 model Comment {
-  author   Goods  @relation(fields: [authorId], references: [id])
   authorId Int
   id       Int    @id @default(autoincrement())
   content  String
+  author   Goods  @relation(fields: [authorId], references: [id])
 
   @@index([authorId])
   @@map("comment")
+}
+
+model Menu {
+  id       Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  icon     String? @db.VarChar(45)
+  menuPath String  @unique(map: "path_UNIQUE") @map("menu_path") @db.VarChar(45)
+  menuName String  @unique(map: "name_UNIQUE") @map("menu_name")
+  permNode Int     @default(0) @map("perm_node")
+  parentId Int?
+  parent   Menu?   @relation("menus", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Menu[]  @relation("menus")
+
+  @@index([parentId])
+  @@map("menu")
 }
 
 enum Role {

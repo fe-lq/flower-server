@@ -1,6 +1,6 @@
 import type Koa from "koa";
 import { goodsServers } from "../services/goods";
-import { handlerError } from "../utils/error";
+import { emitError } from "../utils/error";
 
 class GoodsController {
   async getUsers(ctx: Koa.Context) {
@@ -14,7 +14,7 @@ class GoodsController {
       };
       ctx.status = 200;
     } catch (error) {
-      handlerError(ctx, error);
+      emitError(ctx, error);
     }
   }
 }

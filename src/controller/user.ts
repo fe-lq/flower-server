@@ -1,12 +1,14 @@
 import type Koa from "koa";
 import { userServers } from "../services/user";
 import { cipherDecipher } from "../utils/cipher-decipher";
-import { handlerError } from "../utils/error";
+import { emitError } from "../utils/error";
 
 class UserController {
+  // 注册
   async register(ctx: Koa.Context) {
     const requestParams = ctx.request.body;
     try {
+      // 加密密码
       const { pwdHex } = cipherDecipher.encryptionPwd(requestParams.password);
       console.log(pwdHex, "密码");
 
@@ -17,10 +19,11 @@ class UserController {
       };
       ctx.response.status = 200;
     } catch (error) {
-      handlerError(ctx, error);
+      emitError(ctx, error);
     }
   }
 
+  // 登录
   async login(ctx: Koa.Context) {
     const { password, phone } = ctx.request.body;
     try {
@@ -32,7 +35,7 @@ class UserController {
       };
       ctx.status = 200;
     } catch (error) {
-      handlerError(ctx, error);
+      emitError(ctx, error);
     }
   }
 }

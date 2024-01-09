@@ -8,6 +8,7 @@ const router = new Router();
  */
 fs.readdirSync(__dirname).forEach((file) => {
   if (file !== "index.ts") {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { router: subRouter } = require(`./${file}`);
     if (subRouter) {
       router.use(subRouter.routes());

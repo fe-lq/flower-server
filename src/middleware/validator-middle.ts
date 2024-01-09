@@ -1,6 +1,7 @@
 import type Koa from "koa";
 import type Joi from "joi";
-import { handlerError } from "../utils/error";
+import { emitError } from "../utils/error";
+import { BAD_REQUEST } from "../constants";
 
 /**
  * 生成公共的校验方法，校验请求参数
@@ -14,9 +15,9 @@ export const genVerifyParams = (schema: Joi.Schema) => {
     } else {
       data = ctx.request.body;
     }
-    const { error } = schema.validate(data);
+    const { error } = schema.validate(data, { allowUnknown: true });
     if (error) {
-      handlerError(ctx, error, 400);
+      emitError(ctx, error, BAD_REQUEST);
       return;
     }
     await next();
