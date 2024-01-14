@@ -19,6 +19,6 @@ router.get("/delete", menuController.deleteMenuItem);
 router.post(
   "/update",
   genVerifyParams(addMenuSchema),
-  checkMenuMiddle,
   menuController.updateMenuItem
 );
+router.post("/updateSort", menuController.updateMenuSort);

@@ -109,6 +109,21 @@ class MenuController {
     }
   }
 
+  // 更新菜单顺序
+  async updateMenuSort(ctx: Koa.Context) {
+    try {
+      const data = ctx.request.body;
+      await menuServers.updateMenuSort(data);
+      ctx.body = {
+        code: 0,
+        message: "success",
+      };
+      ctx.status = 200;
+    } catch (error) {
+      emitError(ctx, error);
+    }
+  }
+
   // 删除菜单项
   async deleteMenuItem(ctx: Koa.Context) {
     try {

@@ -46,6 +46,31 @@ class MenuServers {
   updateMenu = async (data: Menu): Promise<Menu> =>
     await db.menu.update({ where: { id: data.id }, data });
 
+  /** 修改菜单顺序 */
+  updateMenuSort = async (
+    data: (Menu & { children: Menu[] })[]
+  ): Promise<any> => {
+    const all = await Promise.all(
+      data.map((item) =>
+        db.menu.update({
+          where: { id: item.id },
+          data: {
+            level: item.level,
+            children: {
+              update: item.children.map((child) => ({
+                where: { id: child.id },
+                data: {
+                  level: child.level,
+                },
+              })),
+            },
+          },
+        })
+      )
+    );
+    return all;
+  };
+
   /** 查询菜单 */
   getMenuList = async (data?: Menu): Promise<Menu[]> =>
     await db.menu.findMany({
@@ -54,8 +79,15 @@ class MenuServers {
         menuName: data?.menuName,
         menuPath: data?.menuPath,
       },
+      orderBy: {
+        level: "asc",
+      },
       include: {
-        children: true,
+        children: {
+          orderBy: {
+            level: "asc",
+          },
+        },
       },
     });
 

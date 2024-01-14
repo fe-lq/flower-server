@@ -54,13 +54,14 @@ model Comment {
 
 model Menu {
   id       Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  icon     String? @db.VarChar(45)
+  icon     String? @db.LongText
   menuPath String  @unique(map: "path_UNIQUE") @map("menu_path") @db.VarChar(45)
   menuName String  @unique(map: "name_UNIQUE") @map("menu_name")
-  permNode Int     @default(0) @map("perm_node")
+  permNode Int?    @default(0) @map("perm_node")
+  level    Int     @default(0) @map("menu_level")
   parentId Int?
-  parent   Menu?   @relation("menus", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children Menu[]  @relation("menus")
+  parent   Menu?   @relation("menu", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Menu[]  @relation("menu")
 
   @@index([parentId])
   @@map("menu")

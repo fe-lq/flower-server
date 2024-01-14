@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { dbLogger } from "../logs";
 const prisma = new PrismaClient({
   log: [{ level: "error", emit: "event" }],
-  errorFormat: "pretty",
+  errorFormat: "colorless",
 });
 
 // 注册全局的监听日志
