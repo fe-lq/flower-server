@@ -1,13 +1,13 @@
 import { createLogger, format, transports } from "winston";
 
-const { combine, timestamp, prettyPrint } = format;
+const { combine, timestamp, prettyPrint, printf } = format;
 // 字符串格式
-// const logFormat = printf(({ level, message, timestamp }) => {
-//   return `[${timestamp}] ${level}: ${JSON.stringify(message)}`;
-// });
+const logFormat = printf(({ level, message }) => {
+  return `${level}: ${JSON.stringify(message)}`;
+});
 
 export const logger = createLogger({
-  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), prettyPrint()),
+  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat),
   transports: [
     new transports.File({
       filename: `${__dirname}/files/error.log`,

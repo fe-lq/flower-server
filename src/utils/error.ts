@@ -1,6 +1,10 @@
 import type Koa from "koa";
 import { logger } from "../logs";
-import { BAD_REQUEST, FORBIDDEN, INTERNAL_SERVER_ERROR } from "../constants";
+import {
+  BAD_REQUEST,
+  ERROR_CODE_MAP,
+  INTERNAL_SERVER_ERROR,
+} from "../constants";
 
 /**
  * 错误处理
@@ -17,30 +21,16 @@ export const emitError = (
     case BAD_REQUEST:
       ctx.body = {
         code: -1,
-        message: msg?.message,
+        message: msg?.message ?? ERROR_CODE_MAP[stateCode],
       };
       break;
-    case FORBIDDEN:
-      ctx.body = {
-        code: -1,
-        message: "无权限",
-      };
-      break;
-
-    case INTERNAL_SERVER_ERROR:
-      ctx.body = {
-        code: -1,
-        message: "system server error",
-      };
-      break;
-
     default:
       ctx.body = {
         code: -1,
-        message: "bad request",
+        message: ERROR_CODE_MAP[stateCode] ?? "bad request",
       };
+      break;
   }
-
   // 打印日志
   logger.error(msg);
 };

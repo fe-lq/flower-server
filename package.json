@@ -9,7 +9,8 @@
     "format": "prettier --write src/",
     "push": "prisma db push",
     "pull": "prisma db pull",
-    "generate": "prisma generate"
+    "generate": "prisma generate",
+    "prepare": "prisma generate && husky install"
   },
   "keywords": [],
   "author": "LiuQi",
@@ -23,17 +24,20 @@
     "jsonwebtoken": "^9.0.2",
     "koa": "^2.14.2",
     "koa-body": "^6.0.1",
+    "koa-jwt": "^4.0.4",
     "koa-router": "^12.0.0",
     "koa-static-cache": "^5.1.4",
     "lodash": "^4.17.21",
     "moment": "^2.29.4",
     "mysql2": "^3.4.3",
+    "redis": "^4.6.12",
     "uuid": "^9.0.1",
     "winston": "^3.10.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.6.6",
     "@commitlint/config-conventional": "^17.6.6",
+    "@types/crypto-js": "^4.2.1",
     "@types/jsonwebtoken": "^9.0.4",
     "@types/koa": "^2.13.6",
     "@types/koa-router": "^7.4.4",
@@ -44,6 +48,7 @@
     "@typescript-eslint/eslint-plugin": "^5.61.0",
     "@typescript-eslint/parser": "^5.61.0",
     "cross-env": "^7.0.3",
+    "crypto-js": "^4.2.0",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",

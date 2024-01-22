@@ -14,6 +14,11 @@ router.post(
   userController.register
 );
 router.post("/login", userController.login);
+router.post("/list", userController.getUserList);
+router.post("/add", userController.register);
+router.post("/update", userController.updateUser);
+router.get("/delete", userController.deleteUser);
+router.get("/read", userController.getUserDetail);
 
 // router.post("/login", userController.register);
 // router.post("/logout", userController.register);

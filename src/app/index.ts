@@ -1,20 +1,20 @@
 import Koa from "koa";
-import body from "koa-body";
+
 import router from "../routers";
-import { httpLog, setHttpHeader } from "../middleware";
-import { logger } from "../logs";
+import {
+  jwtAuthMiddle,
+  httpLogMiddle,
+  parseBodyMiddle,
+  corsMiddleware,
+  validateTokenMiddle,
+} from "../middleware";
 
 const app = new Koa();
-app.use(
-  body({
-    onError: (err) => {
-      // 处理错误
-      logger.error(err.message);
-    },
-  })
-);
-app.use(httpLog);
-app.use(setHttpHeader);
+app.use(parseBodyMiddle);
+app.use(httpLogMiddle);
+app.use(corsMiddleware);
+app.use(jwtAuthMiddle);
+app.use(validateTokenMiddle);
 app.use(router.routes());
 app.use(router.allowedMethods());
 

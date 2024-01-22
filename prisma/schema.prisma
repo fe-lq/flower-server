@@ -9,12 +9,14 @@ datasource db {
 }
 
 model Users {
-  userId   Int     @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("user_id")
-  userName String  @map("user_name") @db.VarChar(45)
-  password String  @db.VarChar(45)
-  phone    String  @unique(map: "phone_UNIQUE") @db.VarChar(45)
-  status   Boolean @default(false)
-  role     Role    @default(USER)
+  userId     Int       @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("user_id")
+  userName   String    @map("user_name") @db.VarChar(45)
+  password   String    @db.VarChar(60)
+  phone      String    @unique(map: "phone_UNIQUE") @db.Char(45)
+  email      String?   @db.VarChar(45)
+  createDate DateTime? @default(now()) @map("create_date")
+  status     Boolean   @default(false)
+  role       Role      @default(USER)
 
   @@map("users")
 }
