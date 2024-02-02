@@ -11,6 +11,9 @@ class UserServers {
   getUserList = async (params: UserParams): Promise<Users[]> => {
     const limit = params.pageSize ?? 100;
     return await db.users.findMany({
+      include: {
+        permission: { select: { roleName: true } },
+      },
       where: {
         AND: {
           userName: {

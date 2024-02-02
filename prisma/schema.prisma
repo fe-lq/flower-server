@@ -16,7 +16,6 @@ model Users {
   email        String?     @db.VarChar(45)
   createDate   DateTime?   @default(now()) @map("create_date")
   status       Boolean     @default(false)
-  role         Role        @default(USER)
   permissionId Int?
   permission   Permission? @relation(fields: [permissionId], references: [id])
 
@@ -82,9 +81,4 @@ model Permission {
   permissionScope Menu[]
 
   @@map("permission")
-}
-
-enum Role {
-  ADMIN
-  USER
 }

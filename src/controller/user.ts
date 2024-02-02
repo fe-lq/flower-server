@@ -6,6 +6,8 @@ import JWT from "jsonwebtoken";
 import { genEncryptPsw, getPasswordHash } from "../utils";
 import { omit } from "lodash";
 import { menuServers } from "../services/menu";
+import { Permission, Users } from "@prisma/client";
+import { redisClient } from "../redis";
 
 class UserController {
   // 注册
@@ -59,6 +61,22 @@ class UserController {
     }
   }
 
+  // 退出登录
+  loginOut = async (ctx: Koa.Context) => {
+    try {
+      const token = ctx.header.authorization;
+      const { user, exp, iat } = await this.getUserByToken(token);
+      await redisClient.setValue(token, user.phone, exp - iat);
+      ctx.body = {
+        code: 0,
+        message: "success",
+      };
+      ctx.status = 200;
+    } catch (error) {
+      emitError(ctx, error);
+    }
+  };
+
   getUserInfo = async (ctx: Koa.Context) => {
     const token = ctx.header.authorization;
     try {
@@ -80,7 +98,7 @@ class UserController {
 
   // 根据有效token获取用户信息
   async getUserByToken(token: string) {
-    const { password, phone, exp } = JWT.verify(
+    const { password, phone, exp, iat } = JWT.verify(
       token.split(" ")[1],
       JWT_SECRET_KEY
     ) as any;
@@ -88,16 +106,21 @@ class UserController {
       phone,
       password,
     });
-    return { user, exp };
+    return { user, exp, iat };
   }
 
   async getUserList(ctx: Koa.Context) {
     const searchParams = ctx.request.body ?? {};
     try {
-      const data = await userServers.getUserList(searchParams);
+      const data = (await userServers.getUserList(searchParams)) as (Users & {
+        permission: Permission;
+      })[];
       ctx.body = {
         code: 0,
-        data,
+        data: data.map((user) => ({
+          ...user,
+          role: user.permission?.roleName,
+        })),
         message: "success",
       };
       ctx.status = 200;

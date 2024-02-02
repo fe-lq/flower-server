@@ -32,5 +32,9 @@ export const emitError = (
       break;
   }
   // 打印日志
-  logger.error(msg);
+  if (msg) {
+    logger.error(msg);
+  }
+
+  // return Promise.reject(ctx.body);
 };

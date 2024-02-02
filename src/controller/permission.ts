@@ -4,7 +4,7 @@ import { emitError } from "../utils/error";
 
 class PermController {
   async getPerms(ctx: Koa.Context) {
-    const queryParams = ctx.request.body;
+    const queryParams = ctx.request.body ?? {};
     try {
       const res = await permissionServer.getPerms(queryParams);
       ctx.body = {

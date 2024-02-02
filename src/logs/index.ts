@@ -12,12 +12,12 @@ export const logger = createLogger({
     new transports.File({
       filename: `${__dirname}/files/error.log`,
       level: "error",
-      maxFiles: 50,
+      maxFiles: 1,
     }),
     new transports.File({
       filename: `${__dirname}/files/info.log`,
       level: "info",
-      maxFiles: 50,
+      maxFiles: 1,
     }),
   ],
 });

@@ -20,6 +20,4 @@ router.post("/update", userController.updateUser);
 router.get("/delete", userController.deleteUser);
 router.get("/read", userController.getUserDetail);
 router.get("/info", userController.getUserInfo);
-
-// router.post("/login", userController.register);
-// router.post("/logout", userController.register);
+router.get("/logout", userController.loginOut);

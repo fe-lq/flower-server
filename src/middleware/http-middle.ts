@@ -10,6 +10,7 @@ import {
   JWT_WHITE_LIST,
   TOKEN_EXPIRED_TIME,
   TOKEN_REFRESH_TIME,
+  UNAUTHORIZED,
 } from "../constants";
 import { emitError } from "../utils/error";
 import { redisClient } from "../redis";
@@ -78,43 +79,52 @@ export const jwtAuthMiddle = KoaJwt({
 export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
   const token = ctx.header.authorization;
 
-  if (JWT_WHITE_LIST.some((item) => item.test(ctx.url))) {
+  if (
+    JWT_WHITE_LIST.some((item) => item.test(ctx.url)) ||
+    ctx.method === "OPTIONS"
+  ) {
     await next();
   } else {
     try {
       if (token) {
-        // 查看用户还存不存在
-        const { user, exp } = await userController.getUserByToken(token);
-
-        if (user) {
-          // 续签token
-          const allowTime = parseInt(exp) - new Date().getTime() / 1000;
-          if (allowTime < TOKEN_REFRESH_TIME) {
-            const oldToken = await redisClient.getValue(user.phone);
-            if (!oldToken) {
-              const newToken = JWT.sign(
-                { phone: user.phone, password: user.password },
-                JWT_SECRET_KEY,
-                {
-                  expiresIn: TOKEN_EXPIRED_TIME,
-                }
-              );
-              // 在请求头刷新token
-              ctx.set({
-                "Refresh-Token": newToken,
-              });
-              await redisClient.setValue(
-                user.phone,
-                newToken,
-                TOKEN_REFRESH_TIME
-              );
-            }
-          }
+        const errorToken = await redisClient.getValue(token);
+        // 用已经退出的token请求就拦截
+        if (errorToken) {
+          emitError(ctx, undefined, UNAUTHORIZED);
         } else {
-          emitError(ctx, { message: "当前用户不存在" }, FORBIDDEN);
+          // 查看用户还存不存在，防止用户被删除还能用旧token请求
+          const { user, exp } = await userController.getUserByToken(token);
+
+          if (user) {
+            // 续签token
+            const allowTime = parseInt(exp) - new Date().getTime() / 1000;
+            if (allowTime < TOKEN_REFRESH_TIME) {
+              const oldToken = await redisClient.getValue(user.phone);
+              if (!oldToken) {
+                const newToken = JWT.sign(
+                  { phone: user.phone, password: user.password },
+                  JWT_SECRET_KEY,
+                  {
+                    expiresIn: TOKEN_EXPIRED_TIME,
+                  }
+                );
+                // 在请求头刷新token
+                ctx.set({
+                  "Refresh-Token": newToken,
+                });
+                await redisClient.setValue(
+                  user.phone,
+                  newToken,
+                  TOKEN_REFRESH_TIME
+                );
+              }
+            }
+            await next();
+          } else {
+            emitError(ctx, { message: "当前用户不存在" }, FORBIDDEN);
+          }
         }
       }
-      await next();
     } catch (error) {
       emitError(ctx, error);
     }
