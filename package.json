@@ -9,7 +9,7 @@
     "format": "prettier --write src/",
     "push": "prisma db push",
     "pull": "prisma db pull",
-    "generate": "prisma generate",
+    "gen": "prisma generate",
     "prepare": "prisma generate && husky install"
   },
   "keywords": [],

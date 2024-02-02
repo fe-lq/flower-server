@@ -14,3 +14,17 @@ export const getPasswordHash = (password: string) => {
   const pwdHex = cipherDecipher.encryptionPwd(bytes.toString(Crypto.enc.Utf8));
   return pwdHex;
 };
+
+/**
+ *
+ * @param password 数据库中存储的密码
+ * @returns 前端显示的密码
+ */
+export const genEncryptPsw = (password: string) => {
+  //解密存储到数据库中的密码
+  const pwdHex = cipherDecipher.decryptionPwd(password);
+  //加密显示给前端
+  const bytes = Crypto.AES.encrypt(pwdHex, PASSWORD_SECRET_KEY).toString();
+
+  return bytes;
+};

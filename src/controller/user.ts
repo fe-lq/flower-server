@@ -3,8 +3,9 @@ import { userServers } from "../services/user";
 import { emitError } from "../utils/error";
 import { BAD_REQUEST, JWT_SECRET_KEY, TOKEN_EXPIRED_TIME } from "../constants";
 import JWT from "jsonwebtoken";
-import { getPasswordHash } from "../utils";
-import { cipherDecipher } from "../utils/cipher-decipher";
+import { genEncryptPsw, getPasswordHash } from "../utils";
+import { omit } from "lodash";
+import { menuServers } from "../services/menu";
 
 class UserController {
   // 注册
@@ -44,6 +45,7 @@ class UserController {
             code: 0,
             data: {
               token,
+              user,
             },
             message: "success",
           };
@@ -57,8 +59,40 @@ class UserController {
     }
   }
 
+  getUserInfo = async (ctx: Koa.Context) => {
+    const token = ctx.header.authorization;
+    try {
+      const menuList = await menuServers.getMenuList();
+      const { user } = await this.getUserByToken(token);
+      ctx.body = {
+        code: 0,
+        data: {
+          user: omit(user, "password"),
+          menuList,
+        },
+        message: "success",
+      };
+      ctx.status = 200;
+    } catch (error) {
+      emitError(ctx, error);
+    }
+  };
+
+  // 根据有效token获取用户信息
+  async getUserByToken(token: string) {
+    const { password, phone, exp } = JWT.verify(
+      token.split(" ")[1],
+      JWT_SECRET_KEY
+    ) as any;
+    const user = await userServers.getUserDetail({
+      phone,
+      password,
+    });
+    return { user, exp };
+  }
+
   async getUserList(ctx: Koa.Context) {
-    const searchParams = ctx.request.body;
+    const searchParams = ctx.request.body ?? {};
     try {
       const data = await userServers.getUserList(searchParams);
       ctx.body = {
@@ -88,8 +122,9 @@ class UserController {
 
   async updateUser(ctx: Koa.Context) {
     const requestParams = ctx.request.body;
+    const pwdHex = getPasswordHash(requestParams.password);
     try {
-      await userServers.updateUser(requestParams);
+      await userServers.updateUser({ ...requestParams, password: pwdHex });
       ctx.body = {
         code: 0,
         message: "success",
@@ -100,13 +135,14 @@ class UserController {
     }
   }
 
+  // 根据用户id读取用户信息
   async getUserDetail(ctx: Koa.Context) {
     const { userId } = ctx.query;
     try {
       const data = await userServers.getUserDetail({
         userId: Number(userId),
       });
-      const password = cipherDecipher.decryptionPwd(data.password);
+      const password = genEncryptPsw(data.password);
       ctx.body = {
         code: 0,
         data: { ...data, password },

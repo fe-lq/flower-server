@@ -12,8 +12,8 @@ import {
   TOKEN_REFRESH_TIME,
 } from "../constants";
 import { emitError } from "../utils/error";
-import { userServers } from "../services/user";
 import { redisClient } from "../redis";
+import { userController } from "../controller/user";
 
 /**
  * 请求日志
@@ -83,29 +83,31 @@ export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
   } else {
     try {
       if (token) {
-        const { password, phone, exp } = JWT.verify(
-          token.split(" ")[1],
-          JWT_SECRET_KEY
-        ) as any;
-        const user = await userServers.getUserDetail({
-          phone,
-          password,
-        });
+        // 查看用户还存不存在
+        const { user, exp } = await userController.getUserByToken(token);
 
         if (user) {
           // 续签token
           const allowTime = parseInt(exp) - new Date().getTime() / 1000;
           if (allowTime < TOKEN_REFRESH_TIME) {
-            const oldToken = await redisClient.getValue(phone);
+            const oldToken = await redisClient.getValue(user.phone);
             if (!oldToken) {
-              const newToken = JWT.sign({ phone, password }, JWT_SECRET_KEY, {
-                expiresIn: TOKEN_EXPIRED_TIME,
-              });
+              const newToken = JWT.sign(
+                { phone: user.phone, password: user.password },
+                JWT_SECRET_KEY,
+                {
+                  expiresIn: TOKEN_EXPIRED_TIME,
+                }
+              );
               // 在请求头刷新token
               ctx.set({
                 "Refresh-Token": newToken,
               });
-              await redisClient.setValue(phone, newToken, TOKEN_REFRESH_TIME);
+              await redisClient.setValue(
+                user.phone,
+                newToken,
+                TOKEN_REFRESH_TIME
+              );
             }
           }
         } else {
