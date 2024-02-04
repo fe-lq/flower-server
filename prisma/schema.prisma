@@ -24,24 +24,29 @@ model Users {
 }
 
 model Goods {
-  id             Int       @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("goods_id")
-  goodsName      String    @map("goods_name") @db.VarChar(45)
-  goodsPrice     String    @map("goods_price") @db.VarChar(45)
-  goodsAmount    Int?      @default(0) @map("goods_amount")
-  goodsImgs      String    @map("goods_imgs")
-  goodsType      Int       @map("goods_type")
-  goodsOnSale    Boolean?  @default(false) @map("goods_on_sale")
-  goodsDesc      String?   @map("goods_desc") @db.VarChar(45)
-  goodsSellCount Int?      @map("goods_sell_count")
-  goodsIsDel     Boolean?  @default(false) @map("goods_is_del")
+  id             Int        @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("goods_id")
+  goodsName      String     @map("goods_name") @db.VarChar(45)
+  goodsPrice     Int        @map("goods_price")
+  goodsAmount    Int?       @default(0) @map("goods_amount")
+  goodsImgs      String     @map("goods_imgs")
+  goodsType      Int        @map("goods_type")
+  type           GoodsTypes @relation(fields: [goodsType], references: [id])
+  goodsOnSale    Boolean?   @default(false) @map("goods_on_sale")
+  goodsDesc      String?    @map("goods_desc") @db.VarChar(45)
+  goodsSellCount Int?       @map("goods_sell_count")
+  goodsIsDel     Boolean?   @default(false) @map("goods_is_del")
   goodsComments  Comment[]
 
+  @@index([goodsType])
   @@map("goods")
 }
 
 model GoodsTypes {
-  id   Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  type String @unique(map: "type_UNIQUE") @db.VarChar(45)
+  id       Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  typeCode String  @unique(map: "typeCode_UNIQUE") @map("type_code") @db.VarChar(45)
+  typeName String  @unique(map: "typeName_UNIQUE") @map("type_name") @db.VarChar(45)
+  typeMemo String? @map("type_memo") @db.VarChar(45)
+  goods    Goods[]
 
   @@map("goods_types")
 }

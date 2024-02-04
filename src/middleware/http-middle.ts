@@ -78,7 +78,6 @@ export const jwtAuthMiddle = KoaJwt({
 
 export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
   const token = ctx.header.authorization;
-
   if (
     JWT_WHITE_LIST.some((item) => item.test(ctx.url)) ||
     ctx.method === "OPTIONS"

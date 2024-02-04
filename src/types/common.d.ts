@@ -4,6 +4,8 @@ export interface PaginationParams {
 }
 
 export type RequiredPick<T, K extends keyof T> = {
+  [J in keyof T]?: T[J];
+} & {
   [P in K]-?: T[P];
 };
 

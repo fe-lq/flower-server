@@ -35,6 +35,4 @@ export const emitError = (
   if (msg) {
     logger.error(msg);
   }
-
-  // return Promise.reject(ctx.body);
 };
