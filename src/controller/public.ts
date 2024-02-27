@@ -2,16 +2,21 @@ import type Koa from "koa";
 import fs from "fs";
 import { emitError } from "../utils/error";
 import { BAD_REQUEST } from "../constants";
+import { publicServers } from "../services/public";
 class PublicController {
   // 上传文件
   uploadFile = async (ctx: Koa.Context) => {
     try {
-      const file = ctx.request.files.files as unknown as Koa.Request["files"];
+      const file = ctx.request.files.files as any;
+      const ossFile = await publicServers.putOssFile(
+        `icons/${file.originalFilename}`,
+        file.filepath
+      );
       ctx.body = {
         code: 0,
         data: {
-          filename: file.newFilename,
-          path: `http://127.0.0.1:5500/public/files/${file.newFilename}`,
+          filename: file.originalFilename,
+          path: ossFile.url,
         },
         message: "success",
       };
@@ -25,6 +30,8 @@ class PublicController {
   deleteFile = async (ctx: Koa.Context) => {
     try {
       const path = ctx.request.body.filePath;
+      const fileName = path.split("/").pop();
+      await publicServers.deleteOssFile(`files/${fileName}`);
       fs.unlinkSync(path);
       ctx.body = {
         code: 0,

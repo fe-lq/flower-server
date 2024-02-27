@@ -3,6 +3,8 @@ import fs from "fs";
 import { menuServers } from "../services/menu";
 import { emitError } from "../utils/error";
 import { BAD_REQUEST } from "../constants";
+import { publicServers } from "../services/public";
+import { getCurrentPath } from "../utils";
 
 class MenuController {
   // 获取图标
@@ -23,12 +25,16 @@ class MenuController {
   // 上传图标
   async uploadIcon(ctx: Koa.Context) {
     try {
-      const file = ctx.request.files.file as unknown as Koa.Request["files"];
+      const file = ctx.request.files.file as any;
+      const ossFile = await publicServers.putOssFile(
+        `icons/${file.originalFilename}`,
+        file.filepath
+      );
       ctx.body = {
         code: 0,
         data: {
           ...file,
-          path: `http://127.0.0.1:5500/public/icons/${file.newFilename}`,
+          path: ossFile.url,
         },
         message: "success",
       };
@@ -42,17 +48,14 @@ class MenuController {
   async deleteIcon(ctx: Koa.Context) {
     try {
       /**
-       * 当静态文件夹部署在服务器是用filepath
+       * TODO: 不用存储在服务器的文件夹时可直接删除
+       * 就不用再调用fs.unlinkSync(getCurrentPath(`icons/${fileName}`))
        *
-       * 本地测试先用newFilename
-       * 所以先拼接/Users/lq/Desktop/lq_project/flower-server/public/icons
        */
-      // /Users/lq/Desktop/lq_project/flower-server/public/icons
       const path = ctx.request.body.filePath;
       const fileName = path.split("/").pop();
-      fs.unlinkSync(
-        `/Users/lq/Desktop/lq_project/flower-server/public/icons/${fileName}`
-      );
+      await publicServers.deleteOssFile(`icons/${fileName}`);
+      fs.unlinkSync(getCurrentPath(`icons/${fileName}`));
       ctx.body = {
         code: 0,
         message: "success",

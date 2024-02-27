@@ -1,6 +1,10 @@
 import { createClient } from "redis";
 
-const client = createClient({ url: "redis://127.0.0.1:6379" });
+const client = createClient({
+  username: "lq_redis",
+  password: "liu202428#",
+  url: "redis://r-bp15vfxfv4zqzcc5txpd.redis.rds.aliyuncs.com:6379",
+});
 /**
  * 使用redis存储一些临时值
  */

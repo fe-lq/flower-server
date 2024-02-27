@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2018",
-    "module": "nodenext",
-    "lib": ["esnext"],
-    "moduleResolution": "NodeNext",
-    "declaration": true,
-    "sourceMap": true,
+    "allowJs": true,
+    "module": "commonjs",
+    "moduleResolution": "Node",
+    "declaration": false,
+    "sourceMap": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "outDir": "./dist",
   },
   "ts-node": {
     "esm": true,

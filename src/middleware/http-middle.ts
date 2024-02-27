@@ -37,7 +37,7 @@ export const httpLogMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
  */
 export const corsMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
   ctx.set({
-    "Access-Control-Allow-Origin": "http://localhost:8080",
+    "Access-Control-Allow-Origin": process.env.ALLOW_ORIGIN,
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "*",
     "Access-Control-Expose-Headers": "*",

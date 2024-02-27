@@ -1,6 +1,5 @@
-import fs from "fs";
-import path from "path";
 import db, { Menu } from "../db";
+import { publicServers } from "./public";
 
 const iconConfig = {
   gold: "金币",
@@ -19,17 +18,14 @@ class MenuServers {
   getMenuIcons = async (): Promise<
     { path: string; label: string }[] | Error
   > => {
-    try {
-      const files = fs.readdirSync(
-        path.join(__dirname) + "/../../public/icons/list"
-      );
-      return files.map((file) => ({
-        path: `http://127.0.0.1:5500/public/icons/list/${file}`,
-        label: iconConfig[file.split(".")[0]],
-      }));
-    } catch (err) {
-      return new Error("读取图标失败");
-    }
+    const list = await publicServers.getOssFiles("icons/list");
+    return list.map((file) => {
+      const fileName = file.name.split(".")[0].substring("icons/list/".length);
+      return {
+        path: file.url,
+        label: iconConfig[fileName],
+      };
+    });
   };
 
   /** 新增菜单 */

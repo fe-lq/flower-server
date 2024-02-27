@@ -7,7 +7,7 @@ const router = new Router();
  * 关键点：路由文件需以 router 命名导出
  */
 fs.readdirSync(__dirname).forEach((file) => {
-  if (file !== "index.ts") {
+  if (!file.startsWith("index")) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const { router: subRouter } = require(`./${file}`);
     if (subRouter) {

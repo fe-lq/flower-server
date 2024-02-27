@@ -30,11 +30,11 @@ model Goods {
   goodsAmount    Int?       @default(0) @map("goods_amount")
   goodsImgs      String     @map("goods_imgs")
   goodsType      Int        @map("goods_type")
-  type           GoodsTypes @relation(fields: [goodsType], references: [id])
   goodsOnSale    Boolean?   @default(false) @map("goods_on_sale")
   goodsDesc      String?    @map("goods_desc") @db.VarChar(45)
   goodsSellCount Int?       @map("goods_sell_count")
   goodsIsDel     Boolean?   @default(false) @map("goods_is_del")
+  type           GoodsTypes @relation(fields: [goodsType], references: [id])
   goodsComments  Comment[]
 
   @@index([goodsType])
@@ -69,10 +69,10 @@ model Menu {
   permNode     Int?        @default(0) @map("perm_node")
   level        Int         @default(0) @map("menu_level")
   parentId     Int?
+  permissionId Int?
   parent       Menu?       @relation("menu", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children     Menu[]      @relation("menu")
   permission   Permission? @relation(fields: [permissionId], references: [id])
-  permissionId Int?
 
   @@index([parentId])
   @@index([permissionId])

@@ -1,6 +1,7 @@
 import koaBody from "koa-body";
 import staticCache from "koa-static-cache";
 import path from "path";
+import { getCurrentPath } from "../utils";
 
 /**
  *
@@ -12,8 +13,11 @@ export const fileMiddles = (dir = "files") => {
     koaBody({
       multipart: true,
       formidable: {
-        uploadDir: path.join(__dirname, `../../public/${dir}`),
+        uploadDir: getCurrentPath(dir),
         keepExtensions: true,
+        filename: (name, ext) => {
+          return `${name}${ext}`;
+        },
       },
     }),
     staticCache(path.join(__dirname, "../../public")),
