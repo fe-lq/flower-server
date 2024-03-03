@@ -15,7 +15,7 @@ router.post(
 );
 router.post("/login", userController.login);
 router.post("/list", userController.getUserList);
-router.post("/add", userController.register);
+router.post("/add", genVerifyParams(addUserSchema), userController.register);
 router.post("/update", userController.updateUser);
 router.get("/delete", userController.deleteUser);
 router.get("/read", userController.getUserDetail);

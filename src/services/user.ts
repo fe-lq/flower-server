@@ -5,7 +5,6 @@ class UserServers {
   // 注册接口
   register = async (data: Users): Promise<Users> =>
     await db.users.create({ data });
-  // loginOut = async (data: Users): Promise<Users> => await db.users.create({ data });
 
   // 查询用户接口
   getUserList = async (params: UserParams): Promise<Users[]> => {

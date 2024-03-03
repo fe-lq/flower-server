@@ -14,13 +14,20 @@ class UserController {
   async register(ctx: Koa.Context) {
     const requestParams = ctx.request.body;
     try {
-      const pwdHex = getPasswordHash(requestParams.password);
-      await userServers.register({ ...requestParams, password: pwdHex });
-      ctx.body = {
-        code: 0,
-        message: "success",
-      };
-      ctx.response.status = 200;
+      const user = await userServers.getUserDetail({
+        phone: requestParams.phone,
+      });
+      if (user) {
+        emitError(ctx, new Error("当前手机号已注册"), BAD_REQUEST);
+      } else {
+        const pwdHex = getPasswordHash(requestParams.password);
+        await userServers.register({ ...requestParams, password: pwdHex });
+        ctx.body = {
+          code: 0,
+          message: "success",
+        };
+        ctx.response.status = 200;
+      }
     } catch (error) {
       emitError(ctx, error);
     }
