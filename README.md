@@ -131,4 +131,4 @@ const prisma = new PrismaClient();
 
 ## 架构图
 
-![](https://github.com/fe-lq/flower-server/tree/master/public/系统架构图.png)
+![](https://github.com/fe-lq/flower-server/blob/master/public/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84%E5%9B%BE.png)
