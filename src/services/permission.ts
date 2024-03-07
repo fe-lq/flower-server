@@ -48,16 +48,20 @@ class PermissionServer {
   updatePerm = async (
     perm: Permission & { members: number[]; permissionScope: number[] }
   ): Promise<Permission> => {
-    let userList = [];
     const { roleName, members, permissionScope } = perm;
-    // 如果没有传members，就把之前存在的members取消连接
-    if (!perm.members?.length) {
-      const permItem = await db.permission.findUnique({
-        where: { id: perm.id },
-        include: { members: { select: { userId: true } } },
-      });
-      userList = permItem.members;
-    }
+    // 先把之前存在的members取消连接
+    const permItem = await db.permission.findUnique({
+      where: { id: perm.id },
+      include: { members: { select: { userId: true } } },
+    });
+    // 先把之前存在的permissions取消连接
+    const permissionItem = await db.permission.findUnique({
+      where: { id: perm.id },
+      include: { permissionScope: { select: { id: true } } },
+    });
+
+    const userList = permItem.members;
+    const menuList = permissionItem.permissionScope;
     return await db.permission.update({
       where: { id: perm.id },
       include: { members: { select: { userId: true, userName: true } } },
@@ -68,6 +72,7 @@ class PermissionServer {
           connect: members.map((id) => ({ userId: id })),
         },
         permissionScope: {
+          disconnect: menuList.length ? menuList : [],
           connect: permissionScope.map((id: number) => ({ id })),
         },
       },

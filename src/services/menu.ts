@@ -87,6 +87,40 @@ class MenuServers {
       },
     });
 
+  /** 查询有权限的菜单 */
+  getPermMenus = async (data?: Partial<Menu>): Promise<Menu[]> =>
+    await db.menu.findMany({
+      where: {
+        OR: [
+          {
+            parentId: null,
+            menuName: data?.menuName,
+            menuPath: data?.menuPath,
+            permissionId: data?.permissionId,
+          },
+          /** 根据权限查询菜单时 */
+          {
+            children: {
+              some: { permissionId: data?.permissionId },
+            },
+          },
+        ],
+      },
+      orderBy: {
+        level: "asc",
+      },
+      include: {
+        children: {
+          orderBy: {
+            level: "asc",
+          },
+          where: {
+            permissionId: data?.permissionId,
+          },
+        },
+      },
+    });
+
   /** 查询单条数据校验 */
   getMenuItem = async (
     data: Menu,

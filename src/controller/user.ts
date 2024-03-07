@@ -46,6 +46,12 @@ class UserController {
           emitError(ctx, new Error("密码错误"), BAD_REQUEST);
         } else if (user.phone !== phone) {
           emitError(ctx, new Error("手机号错误"), BAD_REQUEST);
+        } else if (!user.status) {
+          emitError(
+            ctx,
+            new Error("该用户已被禁用，请联系其他管理员开启"),
+            BAD_REQUEST
+          );
         } else {
           const token = JWT.sign({ password: pwdHex, phone }, JWT_SECRET_KEY, {
             expiresIn: TOKEN_EXPIRED_TIME,
@@ -87,8 +93,11 @@ class UserController {
   getUserInfo = async (ctx: Koa.Context) => {
     const token = ctx.header.authorization;
     try {
-      const menuList = await menuServers.getMenuList();
       const { user } = await this.getUserByToken(token);
+      // 如果是超级管理员角色就返回全部菜单
+      const menuList = await menuServers.getPermMenus({
+        permissionId: user.permissionId === 1 ? undefined : user.permissionId,
+      });
       ctx.body = {
         code: 0,
         data: {
