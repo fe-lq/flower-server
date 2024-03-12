@@ -6,7 +6,7 @@ pipeline {
   stages {
     stage('Dependency') {
       steps {
-        sh 'pnpm install'
+        sh 'pnpm install --no-frozen-lockfile'
       }
     }
     stage('Build') {
