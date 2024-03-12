@@ -6,7 +6,6 @@ pipeline {
   stages {
     stage('Dependency') {
       steps {
-        sh 'npm install pnpm'
         sh 'pnpm install'
       }
     }
