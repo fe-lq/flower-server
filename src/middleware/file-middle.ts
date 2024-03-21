@@ -1,14 +1,14 @@
-import koaBody from "koa-body";
-import staticCache from "koa-static-cache";
-import path from "path";
-import { getCurrentPath } from "../utils";
+import koaBody from 'koa-body';
+import staticCache from 'koa-static-cache';
+import path from 'path';
+import { getCurrentPath } from '../utils';
 
 /**
  *
  * @param path public下的文件夹
  * @returns
  */
-export const fileMiddles = (dir = "files") => {
+export const fileMiddles = (dir = 'files') => {
   return [
     koaBody({
       multipart: true,
@@ -17,9 +17,9 @@ export const fileMiddles = (dir = "files") => {
         keepExtensions: true,
         filename: (name, ext) => {
           return `${name}${ext}`;
-        },
-      },
+        }
+      }
     }),
-    staticCache(path.join(__dirname, "../../public")),
+    staticCache(path.join(__dirname, '../../public'))
   ];
 };

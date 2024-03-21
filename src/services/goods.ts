@@ -1,29 +1,26 @@
-import db, { Goods } from "../db";
-import { RequiredPick } from "../types/common";
+import db, { Goods } from '../db';
+import { RequiredPick } from '../types/common';
 class GoodsServers {
   /**
    * 查询商品接口
    * @param params
    */
-  getGoods = async (
-    params: RequiredPick<Goods, "goodsName" | "goodsOnSale">
-  ): Promise<Goods[]> =>
+  getGoods = async (params: RequiredPick<Goods, 'goodsName' | 'goodsOnSale'>): Promise<Goods[]> =>
     await db.goods.findMany({
       where: {
         ...params,
         goodsName: {
-          contains: params.goodsName,
+          contains: params.goodsName
         },
-        goodsIsDel: false,
-      },
+        goodsIsDel: false
+      }
     });
 
   /**
    * 添加商品接口
    * @param data
    */
-  addGoods = async (data: Goods): Promise<Goods> =>
-    await db.goods.create({ data });
+  addGoods = async (data: Goods): Promise<Goods> => await db.goods.create({ data });
 
   /**
    * 更新商品接口
@@ -32,7 +29,7 @@ class GoodsServers {
   updateGoods = async (data: Goods): Promise<Goods> =>
     await db.goods.update({
       where: { id: data.id },
-      data,
+      data
     });
 
   /**
@@ -41,7 +38,7 @@ class GoodsServers {
    */
   deleteGoods = async (id: number): Promise<Goods> =>
     await db.goods.delete({
-      where: { id },
+      where: { id }
     });
 
   /**

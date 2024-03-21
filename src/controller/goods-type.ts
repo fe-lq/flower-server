@@ -1,6 +1,6 @@
-import type Koa from "koa";
-import { goodsTypeServers } from "../services/goods-type";
-import { emitError } from "../utils/error";
+import type Koa from 'koa';
+import { goodsTypeServers } from '../services/goods-type';
+import { emitError } from '../utils/error';
 
 class GoodsTypeController {
   async getTypeList(ctx: Koa.Context) {
@@ -10,7 +10,7 @@ class GoodsTypeController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -25,7 +25,7 @@ class GoodsTypeController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -39,7 +39,7 @@ class GoodsTypeController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -54,7 +54,7 @@ class GoodsTypeController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {

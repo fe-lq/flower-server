@@ -1,20 +1,20 @@
-import type Koa from "koa";
-import { v1 as uuid } from "uuid";
-import { logger } from "../logs";
-import body from "koa-body";
-import KoaJwt from "koa-jwt";
-import JWT from "jsonwebtoken";
+import type Koa from 'koa';
+import { v1 as uuid } from 'uuid';
+import { logger } from '../logs';
+import body from 'koa-body';
+import KoaJwt from 'koa-jwt';
+import JWT from 'jsonwebtoken';
 import {
   FORBIDDEN,
   JWT_SECRET_KEY,
   JWT_WHITE_LIST,
   TOKEN_EXPIRED_TIME,
   TOKEN_REFRESH_TIME,
-  UNAUTHORIZED,
-} from "../constants";
-import { emitError } from "../utils/error";
-import { redisClient } from "../redis";
-import { userController } from "../controller/user";
+  UNAUTHORIZED
+} from '../constants';
+import { emitError } from '../utils/error';
+import { redisClient } from '../redis';
+import { userController } from '../controller/user';
 
 /**
  * 请求日志
@@ -22,7 +22,7 @@ import { userController } from "../controller/user";
  * @param next
  */
 export const httpLogMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
-  if (ctx.request.method === "GET") {
+  if (ctx.request.method === 'GET') {
     logger.info({ ...ctx.query, ...ctx.request.header });
   } else {
     logger.info({ ...ctx.request.body, ...ctx.request.header });
@@ -37,12 +37,12 @@ export const httpLogMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
  */
 export const corsMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
   ctx.set({
-    "Access-Control-Allow-Origin": process.env.ALLOW_ORIGIN,
-    "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-    "Access-Control-Allow-Headers": "*",
-    "Access-Control-Expose-Headers": "*",
-    "Access-Control-Max-Age": "3600", // 预检请求有效期1小时
-    "X-Request-Id": uuid(),
+    'Access-Control-Allow-Origin': process.env.ALLOW_ORIGIN,
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': '*',
+    'Access-Control-Expose-Headers': '*',
+    'Access-Control-Max-Age': '3600', // 预检请求有效期1小时
+    'X-Request-Id': uuid()
   });
   try {
     await next();
@@ -59,8 +59,8 @@ export const corsMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
 export const parseBodyMiddle = body({
   onError: (err) => {
     // 处理错误
-    logger.error(err.message + "参数解析错误");
-  },
+    logger.error(err.message + '参数解析错误');
+  }
 });
 
 /**
@@ -69,19 +69,16 @@ export const parseBodyMiddle = body({
  * @param next
  */
 export const jwtAuthMiddle = KoaJwt({
-  secret: JWT_SECRET_KEY,
+  secret: JWT_SECRET_KEY
 }).unless({
   // jwt白名单
   path: JWT_WHITE_LIST,
-  method: ["OPTIONS"],
+  method: ['OPTIONS']
 });
 
 export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
   const token = ctx.header.authorization;
-  if (
-    JWT_WHITE_LIST.some((item) => item.test(ctx.url)) ||
-    ctx.method === "OPTIONS"
-  ) {
+  if (JWT_WHITE_LIST.some((item) => item.test(ctx.url)) || ctx.method === 'OPTIONS') {
     await next();
   } else {
     try {
@@ -104,23 +101,19 @@ export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
                   { phone: user.phone, password: user.password },
                   JWT_SECRET_KEY,
                   {
-                    expiresIn: TOKEN_EXPIRED_TIME,
+                    expiresIn: TOKEN_EXPIRED_TIME
                   }
                 );
                 // 在请求头刷新token
                 ctx.set({
-                  "Refresh-Token": newToken,
+                  'Refresh-Token': newToken
                 });
-                await redisClient.setValue(
-                  user.phone,
-                  newToken,
-                  TOKEN_REFRESH_TIME
-                );
+                await redisClient.setValue(user.phone, newToken, TOKEN_REFRESH_TIME);
               }
             }
             await next();
           } else {
-            emitError(ctx, { message: "当前用户不存在" }, FORBIDDEN);
+            emitError(ctx, { message: '当前用户不存在' }, FORBIDDEN);
           }
         }
       }

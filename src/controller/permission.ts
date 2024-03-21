@@ -1,6 +1,6 @@
-import type Koa from "koa";
-import { permissionServer } from "../services/permission";
-import { emitError } from "../utils/error";
+import type Koa from 'koa';
+import { permissionServer } from '../services/permission';
+import { emitError } from '../utils/error';
 
 class PermController {
   async getPerms(ctx: Koa.Context) {
@@ -10,7 +10,7 @@ class PermController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -24,7 +24,7 @@ class PermController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -38,7 +38,7 @@ class PermController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -52,7 +52,7 @@ class PermController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {

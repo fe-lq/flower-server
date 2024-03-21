@@ -1,10 +1,10 @@
-import type Koa from "koa";
-import fs from "fs";
-import { menuServers } from "../services/menu";
-import { emitError } from "../utils/error";
-import { BAD_REQUEST } from "../constants";
-import { publicServers } from "../services/public";
-import { getCurrentPath } from "../utils";
+import type Koa from 'koa';
+import fs from 'fs';
+import { menuServers } from '../services/menu';
+import { emitError } from '../utils/error';
+import { BAD_REQUEST } from '../constants';
+import { publicServers } from '../services/public';
+import { getCurrentPath } from '../utils';
 
 class MenuController {
   // 获取图标
@@ -14,7 +14,7 @@ class MenuController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -34,9 +34,9 @@ class MenuController {
         code: 0,
         data: {
           ...file,
-          path: ossFile.url,
+          path: ossFile.url
         },
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -53,12 +53,12 @@ class MenuController {
        *
        */
       const path = ctx.request.body.filePath;
-      const fileName = path.split("/").pop();
+      const fileName = path.split('/').pop();
       await publicServers.deleteOssFile(`icons/${fileName}`);
       fs.unlinkSync(getCurrentPath(`icons/${fileName}`));
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -73,7 +73,7 @@ class MenuController {
       await menuServers.addMenu(data);
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -89,7 +89,7 @@ class MenuController {
       ctx.body = {
         code: 0,
         data: res,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -104,7 +104,7 @@ class MenuController {
       await menuServers.updateMenu(data);
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -119,7 +119,7 @@ class MenuController {
       await menuServers.updateMenuSort(data);
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -134,7 +134,7 @@ class MenuController {
       await menuServers.deleteMenu(Number(data.id));
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {

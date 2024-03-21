@@ -1,31 +1,30 @@
-import db, { Users } from "../db";
-import { UserParams } from "../types/user";
+import db, { Users } from '../db';
+import { UserParams } from '../types/user';
 
 class UserServers {
   // 注册接口
-  register = async (data: Users): Promise<Users> =>
-    await db.users.create({ data });
+  register = async (data: Users): Promise<Users> => await db.users.create({ data });
 
   // 查询用户接口
   getUserList = async (params: UserParams): Promise<Users[]> => {
     const limit = params.pageSize ?? 100;
     return await db.users.findMany({
       include: {
-        permission: { select: { roleName: true } },
+        permission: { select: { roleName: true } }
       },
       where: {
         AND: {
           userName: {
-            contains: params.userName,
+            contains: params.userName
           },
           phone: {
-            contains: params.phone,
+            contains: params.phone
           },
-          status: params.status,
-        },
+          status: params.status
+        }
       },
       take: limit,
-      skip: ((params.page ?? 1) - 1) * limit,
+      skip: ((params.page ?? 1) - 1) * limit
     });
   };
 
@@ -33,9 +32,9 @@ class UserServers {
   updateUser = async (data: Users): Promise<Users> =>
     await db.users.update({
       where: {
-        userId: data.userId,
+        userId: data.userId
       },
-      data,
+      data
     });
 
   // 删除用户接口

@@ -1,13 +1,13 @@
-import Koa from "koa";
+import Koa from 'koa';
 
-import router from "../routers";
+import router from '../routers';
 import {
   jwtAuthMiddle,
   httpLogMiddle,
   parseBodyMiddle,
   corsMiddleware,
-  validateTokenMiddle,
-} from "../middleware";
+  validateTokenMiddle
+} from '../middleware';
 
 const app = new Koa();
 app.use(parseBodyMiddle);

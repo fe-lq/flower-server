@@ -1,13 +1,13 @@
-import type Koa from "koa";
-import { userServers } from "../services/user";
-import { emitError } from "../utils/error";
-import { BAD_REQUEST, JWT_SECRET_KEY, TOKEN_EXPIRED_TIME } from "../constants";
-import JWT from "jsonwebtoken";
-import { genEncryptPsw, getPasswordHash } from "../utils";
-import { omit } from "lodash";
-import { menuServers } from "../services/menu";
-import { Permission, Users } from "@prisma/client";
-import { redisClient } from "../redis";
+import type Koa from 'koa';
+import { userServers } from '../services/user';
+import { emitError } from '../utils/error';
+import { BAD_REQUEST, JWT_SECRET_KEY, TOKEN_EXPIRED_TIME } from '../constants';
+import JWT from 'jsonwebtoken';
+import { genEncryptPsw, getPasswordHash } from '../utils';
+import { omit } from 'lodash';
+import { menuServers } from '../services/menu';
+import { Permission, Users } from '@prisma/client';
+import { redisClient } from '../redis';
 
 class UserController {
   // 注册
@@ -15,16 +15,16 @@ class UserController {
     const requestParams = ctx.request.body;
     try {
       const user = await userServers.getUserDetail({
-        phone: requestParams.phone,
+        phone: requestParams.phone
       });
       if (user) {
-        emitError(ctx, new Error("当前手机号已注册"), BAD_REQUEST);
+        emitError(ctx, new Error('当前手机号已注册'), BAD_REQUEST);
       } else {
         const pwdHex = getPasswordHash(requestParams.password);
         await userServers.register({ ...requestParams, password: pwdHex });
         ctx.body = {
           code: 0,
-          message: "success",
+          message: 'success'
         };
         ctx.response.status = 200;
       }
@@ -38,36 +38,32 @@ class UserController {
     const { password, phone } = ctx.request.body;
     try {
       const user = await userServers.getUserDetail({
-        phone,
+        phone
       });
       if (user) {
         const pwdHex = getPasswordHash(password);
         if (user.password !== pwdHex) {
-          emitError(ctx, new Error("密码错误"), BAD_REQUEST);
+          emitError(ctx, new Error('密码错误'), BAD_REQUEST);
         } else if (user.phone !== phone) {
-          emitError(ctx, new Error("手机号错误"), BAD_REQUEST);
+          emitError(ctx, new Error('手机号错误'), BAD_REQUEST);
         } else if (!user.status) {
-          emitError(
-            ctx,
-            new Error("该用户已被禁用，请联系其他管理员开启"),
-            BAD_REQUEST
-          );
+          emitError(ctx, new Error('该用户已被禁用，请联系其他管理员开启'), BAD_REQUEST);
         } else {
           const token = JWT.sign({ password: pwdHex, phone }, JWT_SECRET_KEY, {
-            expiresIn: TOKEN_EXPIRED_TIME,
+            expiresIn: TOKEN_EXPIRED_TIME
           });
           ctx.body = {
             code: 0,
             data: {
               token,
-              user,
+              user
             },
-            message: "success",
+            message: 'success'
           };
           ctx.status = 200;
         }
       } else {
-        emitError(ctx, new Error("用户不存在"), BAD_REQUEST);
+        emitError(ctx, new Error('用户不存在'), BAD_REQUEST);
       }
     } catch (error) {
       emitError(ctx, error);
@@ -82,7 +78,7 @@ class UserController {
       await redisClient.setValue(token, user.phone, exp - iat);
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -96,15 +92,15 @@ class UserController {
       const { user } = await this.getUserByToken(token);
       // 如果是超级管理员角色就返回全部菜单
       const menuList = await menuServers.getPermMenus({
-        permissionId: user.permissionId === 1 ? undefined : user.permissionId,
+        permissionId: user.permissionId === 1 ? undefined : user.permissionId
       });
       ctx.body = {
         code: 0,
         data: {
-          user: omit(user, "password"),
-          menuList,
+          user: omit(user, 'password'),
+          menuList
         },
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -114,13 +110,10 @@ class UserController {
 
   // 根据有效token获取用户信息
   async getUserByToken(token: string) {
-    const { password, phone, exp, iat } = JWT.verify(
-      token.split(" ")[1],
-      JWT_SECRET_KEY
-    ) as any;
+    const { password, phone, exp, iat } = JWT.verify(token.split(' ')[1], JWT_SECRET_KEY) as any;
     const user = await userServers.getUserDetail({
       phone,
-      password,
+      password
     });
     return { user, exp, iat };
   }
@@ -135,9 +128,9 @@ class UserController {
         code: 0,
         data: data.map((user) => ({
           ...user,
-          role: user.permission?.roleName,
+          role: user.permission?.roleName
         })),
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -151,7 +144,7 @@ class UserController {
       await userServers.deleteUser(Number(userId));
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -166,7 +159,7 @@ class UserController {
       await userServers.updateUser({ ...requestParams, password: pwdHex });
       ctx.body = {
         code: 0,
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {
@@ -179,13 +172,13 @@ class UserController {
     const { userId } = ctx.query;
     try {
       const data = await userServers.getUserDetail({
-        userId: Number(userId),
+        userId: Number(userId)
       });
       const password = genEncryptPsw(data.password);
       ctx.body = {
         code: 0,
         data: { ...data, password },
-        message: "success",
+        message: 'success'
       };
       ctx.status = 200;
     } catch (error) {

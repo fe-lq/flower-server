@@ -1,5 +1,5 @@
-import { createClient } from "redis";
-import { logger } from "../logs";
+import { createClient } from 'redis';
+import { logger } from '../logs';
 
 const client = createClient({ url: process.env.REDIS_URL });
 /**
@@ -7,12 +7,12 @@ const client = createClient({ url: process.env.REDIS_URL });
  */
 class RedisClient {
   initRedis() {
-    client.on("error", (err) => {
+    client.on('error', (err) => {
       logger.error(err.message);
     });
     client.connect();
-    client.on("end", function () {
-      logger.error("redis connection has closed");
+    client.on('end', function () {
+      logger.error('redis connection has closed');
     });
   }
 
@@ -20,7 +20,7 @@ class RedisClient {
     if (time) {
       await client.set(key, value, {
         // 有效期  秒
-        EX: time,
+        EX: time
         // 毫秒
         // PX
       });
