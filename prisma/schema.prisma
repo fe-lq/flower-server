@@ -1,3 +1,5 @@
+// 禁止使用prisma db pull 垃取数据库
+// 因为字段不一致，本地用@map映射了数据库字段
 generator client {
   provider = "prisma-client-js"
 }
@@ -16,49 +18,11 @@ model Users {
   email        String?     @db.VarChar(45)
   createDate   DateTime?   @default(now()) @map("create_date")
   status       Boolean     @default(false)
-  permissionId Int?
+  permissionId Int?        @map("permission_id")
   permission   Permission? @relation(fields: [permissionId], references: [id])
 
   @@index([permissionId])
   @@map("users")
-}
-
-model Goods {
-  id             Int        @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("goods_id")
-  goodsName      String     @map("goods_name") @db.VarChar(45)
-  goodsPrice     Int        @map("goods_price")
-  goodsAmount    Int?       @default(0) @map("goods_amount")
-  goodsImgs      String     @map("goods_imgs")
-  goodsType      Int        @map("goods_type")
-  goodsOnSale    Boolean?   @default(false) @map("goods_on_sale")
-  goodsDesc      String?    @map("goods_desc") @db.VarChar(45)
-  goodsSellCount Int?       @map("goods_sell_count")
-  goodsIsDel     Boolean?   @default(false) @map("goods_is_del")
-  type           GoodsTypes @relation(fields: [goodsType], references: [id])
-  goodsComments  Comment[]
-
-  @@index([goodsType])
-  @@map("goods")
-}
-
-model GoodsTypes {
-  id       Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
-  typeCode String  @unique(map: "typeCode_UNIQUE") @map("type_code") @db.VarChar(45)
-  typeName String  @unique(map: "typeName_UNIQUE") @map("type_name") @db.VarChar(45)
-  typeMemo String? @map("type_memo") @db.VarChar(45)
-  goods    Goods[]
-
-  @@map("goods_types")
-}
-
-model Comment {
-  authorId Int
-  id       Int    @id @default(autoincrement())
-  content  String
-  author   Goods  @relation(fields: [authorId], references: [id])
-
-  @@index([authorId])
-  @@map("comment")
 }
 
 model Menu {
@@ -68,8 +32,8 @@ model Menu {
   menuName     String      @unique(map: "name_UNIQUE") @map("menu_name")
   permNode     Int?        @default(0) @map("perm_node")
   level        Int         @default(0) @map("menu_level")
-  parentId     Int?
-  permissionId Int?
+  parentId     Int?        @map("parent_id")
+  permissionId Int?        @map("permission_id")
   parent       Menu?       @relation("menu", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   children     Menu[]      @relation("menu")
   permission   Permission? @relation(fields: [permissionId], references: [id])
@@ -86,4 +50,152 @@ model Permission {
   permissionScope Menu[]
 
   @@map("permission")
+}
+
+// 客户表
+model Clients {
+  userId      Int       @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("user_id")
+  userAvatar  String?   @map("user_avatar") @db.VarChar(45)
+  userName    String    @map("user_name") @db.VarChar(45)
+  userPhone   String    @map("user_phone") @db.Char(45)
+  userWxCode  String?   @map("user_wx_code") @db.VarChar(45)
+  userStatus  Boolean?  @default(false) @map("user_status")
+  userAddress String?   @map("user_address") @db.VarChar(45)
+  userSex     UserSex?  @map("user_sex")
+  userBirth   DateTime? @map("user_birth")
+  userCreate  DateTime? @default(now()) @map("user_create")
+  userUpdate  DateTime? @default(now()) @map("usert_update")
+
+  @@map("clients")
+}
+
+enum UserSex {
+  MALE
+  FEMALE
+  UNKNOWN
+}
+
+// 商品信息表
+model Goods {
+  id             Int         @id @unique(map: "id_UNIQUE") @default(autoincrement()) @map("goods_id")
+  goodsName      String      @map("goods_name") @db.VarChar(45)
+  // 售价
+  goodsPrice     Int         @map("goods_price")
+  // 假价格
+  goodsMarkPrice Int         @map("goods_Mark_price")
+  // 成本价格
+  goodsCostPrice Int         @map("goods_cost_price")
+  goodsAmount    Int?        @default(0) @map("goods_amount")
+  goodsImgs      String      @map("goods_imgs")
+  goodsTypeId    Int         @map("goods_type_id")
+  goodsOnSale    Boolean?    @default(false) @map("goods_on_sale")
+  goodsDesc      String?     @map("goods_desc") @db.VarChar(45)
+  goodsSellCount Int?        @map("goods_sell_count")
+  goodsIsDel     Boolean?    @default(false) @map("goods_is_del")
+  goodsCreate    DateTime?   @default(now()) @map("goods_create")
+  goodsUpdate    DateTime?   @default(now()) @map("goods_update")
+  goodsUser      String      @map("goods_user")
+  goodsUserId    Int         @map("goods_user_id")
+  goodsType      GoodsTypes  @relation(fields: [goodsTypeId], references: [id])
+  goodsComments  Comment[]
+  cartGoods      CartGoods?
+  orderGoods     OrderGoods?
+
+  @@index([goodsTypeId])
+  @@map("goods")
+}
+
+// 商品类型表, 一、二级分类放在一个表里
+model GoodsTypes {
+  id           Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  typeName     String       @unique(map: "typeName_UNIQUE") @map("type_name") @db.VarChar(45)
+  typeImg      String?      @map("type_img") @db.LongText
+  typeEnable   Boolean      @default(true) @map("type_enable")
+  typeParentId Int?         @map("type_parent_id")
+  typeParent   GoodsTypes?  @relation("goods_types", fields: [typeParentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children     GoodsTypes[] @relation("goods_types")
+  goods        Goods[]
+
+  @@index([typeParentId])
+  @@map("goods_types")
+}
+
+// 评论表
+model Comment {
+  goodsId  Int       @map("goods_id")
+  id       Int       @id @default(autoincrement())
+  content  String
+  parentId Int?      @map("parent_id")
+  authorId Int       @map("author_id")
+  parent   Comment?  @relation("comment", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children Comment[] @relation("comment")
+  goods    Goods     @relation(fields: [goodsId], references: [id])
+
+  @@index([goodsId])
+  @@index([parentId])
+  @@map("comment")
+}
+
+// Banner图表
+model Banner {
+  id           Int       @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  bannerName   String    @map("banner_name") @db.VarChar(45)
+  bannerImgUrl String    @map("banner_img_url") @db.VarChar(45)
+  bannerStatus Boolean   @map("banner_status")
+  bannerCreate DateTime? @default(now()) @map("banner_create")
+  bannerUpdate DateTime? @default(now()) @map("banner_update")
+
+  @@map("banner")
+}
+
+// 订单表
+model Orders {
+  id           Int          @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  orderNo      String       @map("order_no") @db.VarChar(45)
+  orderComment String       @map("order_comment")
+  orderStatus  Int          @map("order_status")
+  orderCreate  DateTime?    @default(now()) @map("order_create")
+  orderUpdate  DateTime?    @default(now()) @map("order_update")
+  orderUserId  Int          @map("order_user_id")
+  orderGoods   OrderGoods[]
+
+  @@map("orders")
+}
+
+// 订单商品表
+model OrderGoods {
+  id         Int    @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  orderId    Int    @map("order_id")
+  goodsId    Int    @unique @map("goods_id")
+  goodsCount Int    @map("goods_count")
+  goods      Goods  @relation(fields: [goodsId], references: [id])
+  order      Orders @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+  @@index([goodsId])
+  @@map("order_goods")
+}
+
+// 购物车表
+model Cart {
+  id         Int         @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  cartUserId Int         @map("cart_user_id")
+  cartGoods  CartGoods[]
+
+  @@map("cart")
+}
+
+// 购物车商品表
+model CartGoods {
+  id             Int     @id @unique(map: "id_UNIQUE") @default(autoincrement())
+  cartId         Int     @map("cart_id")
+  goodsId        Int     @unique @map("goods_id")
+  goodsCount     Int     @map("goods_count")
+  goodsIsChecked Boolean @default(false) @map("goods_is_checked")
+  cart           Cart    @relation(fields: [cartId], references: [id])
+  goods          Goods   @relation(fields: [goodsId], references: [id])
+
+  @@index([cartId])
+  @@index([goodsId])
+  @@map("cart_goods")
 }

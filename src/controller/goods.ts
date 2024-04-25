@@ -1,7 +1,8 @@
 import type Koa from 'koa';
 import { goodsServers } from '../services/goods';
 import { emitError } from '../utils/error';
-import fs from 'fs';
+// import fs from 'fs';
+import { publicServers } from '../services/public';
 
 class GoodsController {
   async getGoods(ctx: Koa.Context) {
@@ -12,7 +13,8 @@ class GoodsController {
         code: 0,
         data: res.map((item) => ({
           ...item,
-          goodsImgs: item.goodsImgs.split(',')
+          goodsImgs: item.goodsImgs.split(','),
+          goodsTypeName: item.goodsType.typeName
         })),
         message: 'success'
       };
@@ -36,6 +38,7 @@ class GoodsController {
       emitError(ctx, error);
     }
   }
+
   async updateGoods(ctx: Koa.Context) {
     const requestParams = ctx.request.body as any;
     try {
@@ -57,12 +60,13 @@ class GoodsController {
   async deleteGoods(ctx: Koa.Context) {
     const { id } = ctx.query as any;
     try {
-      const goods = await goodsServers.findOneGoods(id);
-      goods.goodsImgs.split(',').forEach((path) => {
-        if (path) {
-          fs.unlinkSync(path);
-        }
-      });
+      const goods = await goodsServers.findOneGoods(Number(id));
+      await Promise.all(
+        goods.goodsImgs.split(',').map(async (path) => {
+          const fileName = path.split('/').pop();
+          return await publicServers.deleteOssFile(`files/${fileName}`);
+        })
+      );
       await goodsServers.deleteGoods(Number(id));
       ctx.body = {
         code: 0,

@@ -1,18 +1,27 @@
 import { createClient } from 'redis';
-import { logger } from '../logs';
+// import { logger } from '../logs';
 
 const client = createClient({ url: process.env.REDIS_URL });
 /**
  * 使用redis存储一些临时值
  */
 class RedisClient {
+  errorTimes = 0;
   initRedis() {
-    client.on('error', (err) => {
-      logger.error(err.message);
-    });
     client.connect();
+    client.on('error', (err) => {
+      this.errorTimes++;
+      console.log('Redis Client Error', err);
+      // 尝试 5 次
+      if (this.errorTimes >= 5) {
+        client.disconnect();
+      }
+
+      // logger.error(err.message);
+    });
     client.on('end', function () {
-      logger.error('redis connection has closed');
+      console.log('redis connection has closed');
+      // logger.error('redis connection has closed');
     });
   }
 

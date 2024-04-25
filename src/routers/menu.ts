@@ -6,7 +6,7 @@ import { addMenuSchema } from '../constants/validate-rules';
 export const router = new Router({ prefix: '/menu' });
 
 router.get('/icons', menuController.getIcons);
-router.post('/icon/upload', ...fileMiddles('icons'), menuController.uploadIcon);
+router.post('/icon/upload', ...fileMiddles(), menuController.uploadIcon);
 router.post('/icon/delete', menuController.deleteIcon);
 router.post('/add', genVerifyParams(addMenuSchema), checkMenuMiddle, menuController.addMenuItem);
 router.post('/list', menuController.getMenuList);

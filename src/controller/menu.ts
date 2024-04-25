@@ -1,10 +1,8 @@
 import type Koa from 'koa';
-import fs from 'fs';
 import { menuServers } from '../services/menu';
 import { emitError } from '../utils/error';
 import { BAD_REQUEST } from '../constants';
 import { publicServers } from '../services/public';
-import { getCurrentPath } from '../utils';
 
 class MenuController {
   // 获取图标
@@ -47,15 +45,9 @@ class MenuController {
   // 删除图标
   async deleteIcon(ctx: Koa.Context) {
     try {
-      /**
-       * TODO: 不用存储在服务器的文件夹时可直接删除
-       * 就不用再调用fs.unlinkSync(getCurrentPath(`icons/${fileName}`))
-       *
-       */
       const path = ctx.request.body.filePath;
       const fileName = path.split('/').pop();
       await publicServers.deleteOssFile(`icons/${fileName}`);
-      fs.unlinkSync(getCurrentPath(`icons/${fileName}`));
       ctx.body = {
         code: 0,
         message: 'success'

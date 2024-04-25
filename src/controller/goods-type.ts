@@ -1,6 +1,7 @@
 import type Koa from 'koa';
 import { goodsTypeServers } from '../services/goods-type';
 import { emitError } from '../utils/error';
+import { omit } from 'lodash';
 
 class GoodsTypeController {
   async getTypeList(ctx: Koa.Context) {
@@ -9,7 +10,10 @@ class GoodsTypeController {
       const res = await goodsTypeServers.getTypes(requestParams);
       ctx.body = {
         code: 0,
-        data: res,
+        data: res.map((item) => ({
+          ...omit(item, ['typeParent', 'goods']),
+          typeParentName: item.typeParent?.typeName
+        })),
         message: 'success'
       };
       ctx.status = 200;
@@ -48,7 +52,7 @@ class GoodsTypeController {
   }
 
   async deleteType(ctx: Koa.Context) {
-    const { id } = ctx.query as any;
+    const { id } = ctx.request.body as any;
     try {
       const res = await goodsTypeServers.deleteType(Number(id));
       ctx.body = {

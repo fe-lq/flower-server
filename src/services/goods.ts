@@ -5,7 +5,7 @@ class GoodsServers {
    * 查询商品接口
    * @param params
    */
-  getGoods = async (params: RequiredPick<Goods, 'goodsName' | 'goodsOnSale'>): Promise<Goods[]> =>
+  getGoods = async (params: RequiredPick<Goods, 'goodsName' | 'goodsOnSale'>) =>
     await db.goods.findMany({
       where: {
         ...params,
@@ -13,6 +13,9 @@ class GoodsServers {
           contains: params.goodsName
         },
         goodsIsDel: false
+      },
+      include: {
+        goodsType: true
       }
     });
 
@@ -30,6 +33,17 @@ class GoodsServers {
     await db.goods.update({
       where: { id: data.id },
       data
+    });
+
+  /**
+   * 批量删除商品接口
+   * @param params
+   */
+  deleteMultipleGoods = async (
+    params: Parameters<typeof db.goods.deleteMany>[number]['where']
+  ): Promise<{ count: number }> =>
+    await db.goods.deleteMany({
+      where: params
     });
 
   /**

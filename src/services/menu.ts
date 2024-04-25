@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import db, { Menu } from '../db';
 import { publicServers } from './public';
 
@@ -16,9 +17,9 @@ const iconConfig = {
 class MenuServers {
   /** 获取图标列表 */
   getMenuIcons = async (): Promise<{ path: string; label: string }[] | Error> => {
-    const list = await publicServers.getOssFiles('icons/list');
+    const list = await publicServers.getOssFiles('icons');
     return list.map((file) => {
-      const fileName = file.name.split('.')[0].substring('icons/list/'.length);
+      const fileName = file.name.split('.')[0].substring('icons/'.length);
       return {
         path: file.url,
         label: iconConfig[fileName]
@@ -37,7 +38,7 @@ class MenuServers {
 
   /** 修改菜单 */
   updateMenu = async (data: Menu): Promise<Menu> =>
-    await db.menu.update({ where: { id: data.id }, data });
+    await db.menu.update({ where: { id: data.id }, data: omit(data, 'id') });
 
   /** 修改菜单顺序 */
   updateMenuSort = async (data: (Menu & { children: Menu[] })[]): Promise<any> => {

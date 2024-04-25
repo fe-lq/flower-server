@@ -1,7 +1,6 @@
 import Crypto from 'crypto-js';
 import { cipherDecipher } from './cipher-decipher';
 import { PASSWORD_SECRET_KEY } from '../constants';
-import path from 'path';
 
 /**
  *
@@ -29,5 +28,3 @@ export const genEncryptPsw = (password: string) => {
 
   return bytes;
 };
-
-export const getCurrentPath = (dir?: string) => path.join(__dirname, `../../public/${dir}`);

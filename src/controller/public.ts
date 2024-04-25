@@ -1,5 +1,4 @@
 import type Koa from 'koa';
-import fs from 'fs';
 import { emitError } from '../utils/error';
 import { BAD_REQUEST } from '../constants';
 import { publicServers } from '../services/public';
@@ -9,7 +8,7 @@ class PublicController {
     try {
       const file = ctx.request.files.files as any;
       const ossFile = await publicServers.putOssFile(
-        `icons/${file.originalFilename}`,
+        `files/${file.originalFilename}`,
         file.filepath
       );
       ctx.body = {
@@ -32,7 +31,6 @@ class PublicController {
       const path = ctx.request.body.filePath;
       const fileName = path.split('/').pop();
       await publicServers.deleteOssFile(`files/${fileName}`);
-      fs.unlinkSync(path);
       ctx.body = {
         code: 0,
         message: 'success'

@@ -1,5 +1,6 @@
 import Router from 'koa-router';
 import { goodsTypeController } from '../controller/goods-type';
+import { validateGoodsType } from '../middleware/goods-type';
 
 export const router = new Router({ prefix: '/category' });
 
@@ -7,4 +8,4 @@ export const router = new Router({ prefix: '/category' });
 router.post('/list', goodsTypeController.getTypeList);
 router.post('/add', goodsTypeController.addType);
 router.post('/update', goodsTypeController.updateType);
-router.get('/delete', goodsTypeController.deleteType);
+router.post('/delete', validateGoodsType, goodsTypeController.deleteType);

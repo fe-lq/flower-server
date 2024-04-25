@@ -1,21 +1,27 @@
+import { omit } from 'lodash';
 import db, { GoodsTypes } from '../db';
-import { RequiredPick } from '../types/common';
 class GoodsTypeServers {
   /**
    * 查询商品分类接口
    * @param params
    */
-  getTypes = async (
-    params: RequiredPick<GoodsTypes, 'typeCode' | 'typeName'>
-  ): Promise<GoodsTypes[]> =>
+  getTypes = async (params: Partial<GoodsTypes>) =>
     await db.goodsTypes.findMany({
       where: {
-        typeCode: {
-          contains: params.typeCode
-        },
+        id: params.id,
         typeName: {
           contains: params.typeName
-        }
+        },
+        typeEnable: params.typeEnable
+      },
+      include: {
+        typeParent: {
+          select: {
+            typeName: true
+          }
+        },
+        children: true,
+        goods: true
       }
     });
 
@@ -23,23 +29,23 @@ class GoodsTypeServers {
    * 添加商品分类接口
    * @param data
    */
-  addType = async (data: GoodsTypes): Promise<GoodsTypes> => await db.goodsTypes.create({ data });
+  addType = async (data: GoodsTypes) => await db.goodsTypes.create({ data });
 
   /**
    * 更新商品分类接口
    * @param params
    */
-  updateType = async (data: GoodsTypes): Promise<GoodsTypes> =>
+  updateType = async (data: GoodsTypes) =>
     await db.goodsTypes.update({
       where: { id: data.id },
-      data
+      data: omit(data, ['id', 'typeParentName'])
     });
 
   /**
    * 删除商品分类接口
    * @param params
    */
-  deleteType = async (id: number): Promise<GoodsTypes> =>
+  deleteType = async (id: number) =>
     await db.goodsTypes.delete({
       where: { id }
     });
