@@ -1,3 +1,4 @@
+import { omit } from 'lodash';
 import db, { Goods } from '../db';
 import { RequiredPick } from '../types/common';
 class GoodsServers {
@@ -13,9 +14,6 @@ class GoodsServers {
           contains: params.goodsName
         },
         goodsIsDel: false
-      },
-      include: {
-        goodsType: true
       }
     });
 
@@ -32,7 +30,7 @@ class GoodsServers {
   updateGoods = async (data: Goods): Promise<Goods> =>
     await db.goods.update({
       where: { id: data.id },
-      data
+      data: omit(data, 'id')
     });
 
   /**

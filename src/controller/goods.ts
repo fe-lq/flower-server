@@ -1,7 +1,6 @@
 import type Koa from 'koa';
 import { goodsServers } from '../services/goods';
 import { emitError } from '../utils/error';
-// import fs from 'fs';
 import { publicServers } from '../services/public';
 
 class GoodsController {
@@ -13,8 +12,7 @@ class GoodsController {
         code: 0,
         data: res.map((item) => ({
           ...item,
-          goodsImgs: item.goodsImgs.split(','),
-          goodsTypeName: item.goodsType.typeName
+          goodsImgs: item.goodsImgs.split(',')
         })),
         message: 'success'
       };
