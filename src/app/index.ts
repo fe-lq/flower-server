@@ -1,20 +1,23 @@
 import Koa from 'koa';
 
-import router from '../routers';
+import { RegisterRoutes } from '../routers';
 import {
   jwtAuthMiddle,
   httpLogMiddle,
   parseBodyMiddle,
   corsMiddleware,
-  validateTokenMiddle
+  responseFormatter
 } from '../middleware';
+import Router from '@koa/router';
+const router = new Router();
 
 const app = new Koa();
 app.use(parseBodyMiddle);
 app.use(httpLogMiddle);
 app.use(corsMiddleware);
 app.use(jwtAuthMiddle);
-app.use(validateTokenMiddle);
+app.use(responseFormatter);
+RegisterRoutes(router);
 app.use(router.routes());
 app.use(router.allowedMethods());
 

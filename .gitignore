@@ -5,3 +5,5 @@ dist
 *.log
 *.DS_Store
 app.tar.gz
+# 自动生成的prisma类型
+src/types/prismaTypes.ts

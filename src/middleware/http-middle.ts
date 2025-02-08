@@ -15,6 +15,7 @@ import {
 import { emitError } from '../utils/error';
 import { redisClient } from '../redis';
 import { userController } from '../controller/user';
+import { ValidateError } from 'tsoa';
 
 /**
  * 请求日志
@@ -76,49 +77,108 @@ export const jwtAuthMiddle = KoaJwt({
   method: ['OPTIONS']
 });
 
+/**
+ * 验证token中间件
+ * 主要功能：
+ * 1. 白名单请求直接放行
+ * 2. 检查token是否在黑名单中（已退出的token）
+ * 3. 验证用户是否存在
+ * 4. 处理token续签逻辑
+ */
 export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
   const token = ctx.header.authorization;
-  if (JWT_WHITE_LIST.some((item) => item.test(ctx.url)) || ctx.method === 'OPTIONS') {
-    await next();
-  } else {
-    try {
-      if (token) {
-        const errorToken = await redisClient.getValue(token);
-        // 用已经退出的token请求就拦截
-        if (errorToken) {
-          emitError(ctx, undefined, UNAUTHORIZED);
-        } else {
-          // 查看用户还存不存在，防止用户被删除还能用旧token请求
-          const { user, exp } = await userController.getUserByToken(token);
 
-          if (user) {
-            // 续签token
-            const allowTime = parseInt(exp) - new Date().getTime() / 1000;
-            if (allowTime < TOKEN_REFRESH_TIME) {
-              const oldToken = await redisClient.getValue(user.phone);
-              if (!oldToken) {
-                const newToken = JWT.sign(
-                  { phone: user.phone, password: user.password },
-                  JWT_SECRET_KEY,
-                  {
-                    expiresIn: TOKEN_EXPIRED_TIME
-                  }
-                );
-                // 在请求头刷新token
-                ctx.set({
-                  'Refresh-Token': newToken
-                });
-                await redisClient.setValue(user.phone, newToken, TOKEN_REFRESH_TIME);
-              }
-            }
-            await next();
-          } else {
-            emitError(ctx, { message: '当前用户不存在' }, FORBIDDEN);
-          }
-        }
-      }
-    } catch (error) {
-      emitError(ctx, error);
+  // 白名单和OPTIONS请求直接放行
+  if (JWT_WHITE_LIST.some((item) => item.test(ctx.url)) || ctx.method === 'OPTIONS') {
+    return await next();
+  }
+
+  try {
+    if (!token) {
+      return emitError(ctx, { message: '未提供认证令牌' }, UNAUTHORIZED);
+    }
+
+    // 检查token是否在黑名单中
+    const errorToken = await redisClient.getValue(token);
+    if (errorToken) {
+      return emitError(ctx, { message: 'token已失效' }, UNAUTHORIZED);
+    }
+
+    // 验证用户信息
+    const { user, exp } = await userController.getUserByToken(token);
+    if (!user) {
+      return emitError(ctx, { message: '当前用户不存在' }, FORBIDDEN);
+    }
+
+    // token续签逻辑
+    const currentTime = new Date().getTime() / 1000;
+    const remainingTime = exp - currentTime;
+
+    if (remainingTime < TOKEN_REFRESH_TIME) {
+      await handleTokenRefresh(ctx, user);
+    }
+
+    await next();
+  } catch (error) {
+    emitError(ctx, error);
+  }
+};
+
+/**
+ * 处理token续签逻辑
+ * @param ctx Koa上下文
+ * @param user 用户信息
+ */
+async function handleTokenRefresh(ctx: Koa.Context, user: any) {
+  const oldToken = await redisClient.getValue(user.phone);
+  if (!oldToken) {
+    const newToken = JWT.sign({ phone: user.phone, password: user.password }, JWT_SECRET_KEY, {
+      expiresIn: TOKEN_EXPIRED_TIME
+    });
+
+    // 在响应头中设置新token
+    ctx.set({
+      'Refresh-Token': newToken
+    });
+
+    // 缓存新token
+    await redisClient.setValue(user.phone, newToken, TOKEN_REFRESH_TIME);
+  }
+}
+
+/**
+ * 响应格式化中间件
+ * @param ctx
+ * @param next
+ */
+export const responseFormatter = async (ctx: Koa.Context, next: Koa.Next) => {
+  try {
+    await next();
+    if (ctx.body && !ctx.response.headerSent) {
+      ctx.body = {
+        code: 200,
+        message: 'ok',
+        data: ctx.body
+      };
+    }
+  } catch (error: any) {
+    // 处理tsoa校验的参数
+    if (error instanceof ValidateError) {
+      const fields = Object.keys(error.fields).reduce<Record<string, string>>((acc, key) => {
+        acc[key] = error.fields[key].message;
+        return acc;
+      }, {});
+      ctx.body = {
+        code: error.status,
+        message: '参数错误',
+        errors: fields
+      };
+    } else {
+      ctx.body = {
+        code: error.status || 500,
+        message: error.message || 'Internal server error',
+        errors: error.errors || []
+      };
     }
   }
 };

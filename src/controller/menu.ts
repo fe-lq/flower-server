@@ -1,137 +1,85 @@
-import type Koa from 'koa';
 import { menuServers } from '../services/menu';
-import { emitError } from '../utils/error';
-import { BAD_REQUEST } from '../constants';
 import { publicServers } from '../services/public';
+import {
+  Security,
+  Route,
+  Tags,
+  Get,
+  Post,
+  Middlewares,
+  Response,
+  UploadedFile,
+  Body,
+  Query
+} from '@tsoa/runtime';
+import { fileMiddles } from '../middleware/file-middle';
+import { genVerifyParams } from '../middleware/validator-middle';
+import { addMenuSchema } from '../constants/validate-rules';
+import { checkMenuMiddle } from '../middleware/menu-middle';
+import { CreateMenuDto, UpdateMenuDto } from '../dto/menu.dto';
+import { Controller } from '@tsoa/runtime';
 
-class MenuController {
+@Tags('菜单管理')
+@Security('jwt')
+@Route('menu')
+export class MenuController extends Controller {
   // 获取图标
-  async getIcons(ctx: Koa.Context) {
-    try {
-      const res = await menuServers.getMenuIcons();
-      ctx.body = {
-        code: 0,
-        data: res,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Get('icons')
+  async getIcons() {
+    return await menuServers.getMenuIcons();
   }
 
   // 上传图标
-  async uploadIcon(ctx: Koa.Context) {
-    try {
-      const file = ctx.request.files.file as any;
-      const ossFile = await publicServers.putOssFile(
-        `icons/${file.originalFilename}`,
-        file.filepath
-      );
-      ctx.body = {
-        code: 0,
-        data: {
-          ...file,
-          path: ossFile.url
-        },
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error, BAD_REQUEST);
-    }
+  @Post('icon/upload')
+  @Middlewares(fileMiddles())
+  @Response(200, 'Success')
+  @Response(400, 'Bad Request')
+  async uploadIcon(@UploadedFile() file: Express.Multer.File) {
+    const ossFile = await publicServers.putOssFile(`icons/${file.originalname}`, file.path);
+    return {
+      ...file,
+      path: ossFile.url
+    };
   }
 
   // 删除图标
-  async deleteIcon(ctx: Koa.Context) {
-    try {
-      const path = ctx.request.body.filePath;
-      const fileName = path.split('/').pop();
-      await publicServers.deleteOssFile(`icons/${fileName}`);
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('icon/delete')
+  async deleteIcon(@Body() body: { filePath: string }) {
+    const path = body.filePath;
+    const fileName = path.split('/').pop();
+    await publicServers.deleteOssFile(`icons/${fileName}`);
   }
 
   // 添加菜单项
-  async addMenuItem(ctx: Koa.Context) {
-    try {
-      const data = ctx.request.body;
-      await menuServers.addMenu(data);
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('add')
+  @Middlewares([genVerifyParams(addMenuSchema), checkMenuMiddle])
+  async addMenuItem(@Body() data: CreateMenuDto) {
+    await menuServers.addMenu(data);
   }
 
   // 获取菜单列表
-  async getMenuList(ctx: Koa.Context) {
-    try {
-      const data = ctx.request.body;
-      const res = await menuServers.getMenuList(data);
-      ctx.body = {
-        code: 0,
-        data: res,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('list')
+  async getMenuList(@Body() data: CreateMenuDto) {
+    return await menuServers.getMenuList(data);
   }
 
   // 更新菜单项
-  async updateMenuItem(ctx: Koa.Context) {
-    try {
-      const data = ctx.request.body;
-      await menuServers.updateMenu(data);
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('update')
+  @Middlewares([genVerifyParams(addMenuSchema), checkMenuMiddle])
+  async updateMenuItem(@Body() data: CreateMenuDto & { id: number }) {
+    await menuServers.updateMenu(data);
   }
 
   // 更新菜单顺序
-  async updateMenuSort(ctx: Koa.Context) {
-    try {
-      const data = ctx.request.body;
-      await menuServers.updateMenuSort(data);
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('updateSort')
+  async updateMenuSort(@Body() data: UpdateMenuDto[]) {
+    await menuServers.updateMenuSort(data);
   }
 
   // 删除菜单项
-  async deleteMenuItem(ctx: Koa.Context) {
-    try {
-      const data = ctx.request.query;
-      await menuServers.deleteMenu(Number(data.id));
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Get('delete')
+  async deleteMenuItem(@Query() id: number) {
+    await menuServers.deleteMenu(Number(id));
   }
 }
 

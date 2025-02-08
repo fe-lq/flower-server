@@ -12,6 +12,11 @@ export const MenuRules = {
   menuPath: '路径'
 };
 
+/**
+ * 校验菜单提示映射关系
+ * @param ctx
+ * @param next
+ */
 export const checkMenuMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
   try {
     const data = ctx.request.body;

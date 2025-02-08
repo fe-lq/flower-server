@@ -1,79 +1,41 @@
-import type Koa from 'koa';
 import { goodsServers } from '../services/goods';
-import { emitError } from '../utils/error';
 import { publicServers } from '../services/public';
+import { Controller, Security, Route, Tags, Post, Get, Body, Query } from '@tsoa/runtime';
+import { Goods } from '../types/prismaTypes';
 
-class GoodsController {
-  async getGoods(ctx: Koa.Context) {
-    const requestParams = (ctx.request.body as any) ?? {};
-    try {
-      const res = await goodsServers.getGoods(requestParams);
-      ctx.body = {
-        code: 0,
-        data: res.map((item) => ({
-          ...item,
-          goodsImgs: item.goodsImgs.split(',')
-        })),
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+@Tags('商品接口')
+@Security('jwt')
+@Route('goods')
+export class GoodsController extends Controller {
+  @Post('getList')
+  async getGoods(@Body() requestParams: Required<Pick<Goods, 'goodsName' | 'goodsOnSale'>>) {
+    const res = await goodsServers.getGoods(requestParams);
+    return res.map((item) => ({
+      ...item,
+      goodsImgs: item.goodsImgs.split(',')
+    }));
   }
 
-  async createGoods(ctx: Koa.Context) {
-    const requestParams = ctx.request.body as any;
-    try {
-      const goodsImages = requestParams.goodsImgs.join(',');
-      await goodsServers.addGoods({ ...requestParams, goodsImgs: goodsImages });
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('create')
+  async createGoods(@Body() requestParams: Omit<Goods, 'id'> & { goodsImgs: string[] }) {
+    await goodsServers.addGoods(requestParams);
   }
 
-  async updateGoods(ctx: Koa.Context) {
-    const requestParams = ctx.request.body as any;
-    try {
-      const goodsImages = requestParams.goodsImgs.join(',');
-      await goodsServers.updateGoods({
-        ...requestParams,
-        goodsImgs: goodsImages
-      });
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Post('update')
+  async updateGoods(@Body() requestParams: Goods & { goodsImgs: string[] }) {
+    await goodsServers.updateGoods(requestParams);
   }
 
-  async deleteGoods(ctx: Koa.Context) {
-    const { id } = ctx.query as any;
-    try {
-      const goods = await goodsServers.findOneGoods(Number(id));
-      await Promise.all(
-        goods.goodsImgs.split(',').map(async (path) => {
-          const fileName = path.split('/').pop();
-          return await publicServers.deleteOssFile(`files/${fileName}`);
-        })
-      );
-      await goodsServers.deleteGoods(Number(id));
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+  @Get('delete')
+  async deleteGoods(@Query() id: number) {
+    const goods = await goodsServers.findOneGoods(Number(id));
+    await Promise.all(
+      goods.goodsImgs.split(',').map(async (path) => {
+        const fileName = path.split('/').pop();
+        return await publicServers.deleteOssFile(`files/${fileName}`);
+      })
+    );
+    await goodsServers.deleteGoods(Number(id));
   }
 }
 

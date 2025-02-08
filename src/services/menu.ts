@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
-import db, { Menu } from '../db';
+import db from '../db';
 import { publicServers } from './public';
+import { CreateMenuDto, UpdateMenuDto } from '../dto/menu.dto';
 
 const iconConfig = {
   gold: '金币',
@@ -16,7 +17,7 @@ const iconConfig = {
 
 class MenuServers {
   /** 获取图标列表 */
-  getMenuIcons = async (): Promise<{ path: string; label: string }[] | Error> => {
+  getMenuIcons = async (): Promise<{ path: string; label: string }[]> => {
     const list = await publicServers.getOssFiles('icons');
     return list.map((file) => {
       const fileName = file.name.split('.')[0].substring('icons/'.length);
@@ -28,20 +29,21 @@ class MenuServers {
   };
 
   /** 新增菜单 */
-  addMenu = async (data?: Menu): Promise<Menu> =>
+  addMenu = async (data?: CreateMenuDto): Promise<CreateMenuDto> =>
     await db.menu.create({
       data
     });
 
   /** 删除菜单 */
-  deleteMenu = async (id: number): Promise<Menu> => await db.menu.delete({ where: { id } });
+  deleteMenu = async (id: number): Promise<CreateMenuDto> =>
+    await db.menu.delete({ where: { id } });
 
   /** 修改菜单 */
-  updateMenu = async (data: Menu): Promise<Menu> =>
+  updateMenu = async (data: CreateMenuDto & { id: number }): Promise<CreateMenuDto> =>
     await db.menu.update({ where: { id: data.id }, data: omit(data, 'id') });
 
   /** 修改菜单顺序 */
-  updateMenuSort = async (data: (Menu & { children: Menu[] })[]): Promise<any> => {
+  updateMenuSort = async (data: UpdateMenuDto[]): Promise<any> => {
     const all = await Promise.all(
       data.map((item) =>
         db.menu.update({
@@ -64,7 +66,7 @@ class MenuServers {
   };
 
   /** 查询菜单 */
-  getMenuList = async (data?: Menu): Promise<Menu[]> =>
+  getMenuList = async (data?: CreateMenuDto): Promise<CreateMenuDto[]> =>
     await db.menu.findMany({
       where: {
         parentId: null,
@@ -84,7 +86,7 @@ class MenuServers {
     });
 
   /** 查询有权限的菜单 */
-  getPermMenus = async (data?: Partial<Menu>): Promise<Menu[]> =>
+  getPermMenus = async (data?: Partial<CreateMenuDto>): Promise<CreateMenuDto[]> =>
     await db.menu.findMany({
       where: {
         OR: [
@@ -118,11 +120,14 @@ class MenuServers {
     });
 
   /** 查询单条数据校验 */
-  getMenuItem = async (data: Menu, key: string): Promise<Menu & { key?: string }> => {
+  getMenuItem = async (
+    data: CreateMenuDto,
+    key: string
+  ): Promise<CreateMenuDto & { key?: string }> => {
     const res = await db.menu.findUnique({
       where: {
         [key]: data[key]
-      } as Menu
+      } as CreateMenuDto
     });
     return res ? Object.assign(res, { key }) : res;
   };

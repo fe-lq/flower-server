@@ -1,63 +1,53 @@
-import type Koa from 'koa';
+import { PermissionDto } from '../dto/permission.dto';
 import { permissionServer } from '../services/permission';
-import { emitError } from '../utils/error';
+import { Get, Post, Route, Tags, Security, Body, Query, Response, Controller } from '@tsoa/runtime';
 
-class PermController {
-  async getPerms(ctx: Koa.Context) {
-    const queryParams = ctx.request.body ?? {};
-    try {
-      const res = await permissionServer.getPerms(queryParams);
-      ctx.body = {
-        code: 0,
-        data: res,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+@Tags('权限管理')
+@Security('jwt')
+@Route('permission')
+export class PermController extends Controller {
+  /**
+   * 获取权限列表
+   * @param queryParams 查询参数
+   */
+  @Post('list')
+  @Response(200, 'Success')
+  @Response(400, 'Bad Request')
+  async getPermissions(@Body() queryParams: PermissionDto) {
+    return await permissionServer.getPerms(queryParams);
   }
-  async addPermission(ctx: Koa.Context) {
-    const params = ctx.request.body as any;
-    try {
-      const res = await permissionServer.addPerm(params);
-      ctx.body = {
-        code: 0,
-        data: res,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+
+  /**
+   * 添加权限
+   * @param params 权限信息
+   */
+  @Post('add')
+  @Response(200, 'Success')
+  @Response(400, 'Bad Request')
+  async addPermission(@Body() params: Omit<PermissionDto, 'userName'>) {
+    return await permissionServer.addPerm(params);
   }
-  async updatePermission(ctx: Koa.Context) {
-    const permData = ctx.request.body as any;
-    try {
-      const res = await permissionServer.updatePerm(permData);
-      ctx.body = {
-        code: 0,
-        data: res,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+
+  /**
+   * 更新权限
+   * @param permData 权限更新数据
+   */
+  @Post('update')
+  @Response(200, 'Success')
+  @Response(400, 'Bad Request')
+  async updatePermission(@Body() permData: Partial<PermissionDto> & { id: number }) {
+    return await permissionServer.updatePerm(permData);
   }
-  async deletePermission(ctx: Koa.Context) {
-    const { id } = ctx.query as any;
-    try {
-      const res = await permissionServer.deletePerm(Number(id));
-      ctx.body = {
-        code: 0,
-        data: res,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+
+  /**
+   * 删除权限
+   * @param id 权限ID
+   */
+  @Get('delete')
+  @Response(200, 'Success')
+  @Response(400, 'Bad Request')
+  async deletePermission(@Query() id: number) {
+    return await permissionServer.deletePerm(Number(id));
   }
 }
 

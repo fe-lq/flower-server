@@ -1,5 +1,7 @@
 import { omit } from 'lodash';
-import db, { GoodsTypes } from '../db';
+import db from '../db';
+import { GoodsTypes } from '../types/prismaTypes';
+
 class GoodsTypeServers {
   /**
    * 查询商品分类接口
@@ -8,7 +10,6 @@ class GoodsTypeServers {
   getTypes = async (params: Partial<GoodsTypes>) =>
     await db.goodsTypes.findMany({
       where: {
-        id: params.id,
         typeName: {
           contains: params.typeName
         },
@@ -29,7 +30,17 @@ class GoodsTypeServers {
    * 添加商品分类接口
    * @param data
    */
-  addType = async (data: GoodsTypes) => await db.goodsTypes.create({ data });
+  addType = async (data: Omit<GoodsTypes, 'id'>) =>
+    await db.goodsTypes.create({
+      data: {
+        ...omit(data, ['typeParentId', 'children', 'goods']),
+        typeParent: {
+          connect: {
+            id: data.typeParentId
+          }
+        }
+      }
+    });
 
   /**
    * 更新商品分类接口
@@ -38,7 +49,14 @@ class GoodsTypeServers {
   updateType = async (data: GoodsTypes) =>
     await db.goodsTypes.update({
       where: { id: data.id },
-      data: omit(data, ['id', 'typeParentName'])
+      data: {
+        ...omit(data, ['id', 'typeParentId', 'children', 'goods']),
+        typeParent: {
+          connect: {
+            id: data.typeParentId
+          }
+        }
+      }
     });
 
   /**

@@ -82,7 +82,7 @@ model Goods {
   // 售价
   goodsPrice     Int         @map("goods_price")
   // 假价格
-  goodsMarkPrice Int         @map("goods_Mark_price")
+  goodsMarkPrice Int         @map("goods_mark_price")
   // 成本价格
   goodsCostPrice Int         @map("goods_cost_price")
   goodsAmount    Int?        @default(0) @map("goods_amount")

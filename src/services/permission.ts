@@ -1,8 +1,11 @@
 import db, { Permission } from '../db';
+import { PermissionDto } from '../dto/permission.dto';
 
 class PermissionServer {
   // 查询权限接口
-  getPerms = async (params: { roleName?: string; userName?: string }): Promise<Permission[]> => {
+  getPerms = async (
+    params: Partial<Pick<PermissionDto, 'roleName' | 'userName'>>
+  ): Promise<Permission[]> => {
     const searchParams = {
       roleName: params.roleName ? { contains: params.roleName } : undefined,
       members: params.userName ? { some: { userName: { contains: params.userName } } } : undefined
@@ -19,7 +22,7 @@ class PermissionServer {
   };
 
   // 新增权限接口
-  addPerm = async (perm: any): Promise<Permission> => {
+  addPerm = async (perm: Omit<PermissionDto, 'userName'>): Promise<Permission> => {
     const { roleName, members, permissionScope } = perm;
     return await db.permission.create({
       data: {
@@ -40,9 +43,7 @@ class PermissionServer {
   };
 
   // 更新权限接口
-  updatePerm = async (
-    perm: Permission & { members: number[]; permissionScope: number[] }
-  ): Promise<Permission> => {
+  updatePerm = async (perm: Partial<PermissionDto> & { id: number }): Promise<Permission> => {
     const { roleName, members, permissionScope } = perm;
     // 先把之前存在的members取消连接
     const permItem = await db.permission.findUnique({

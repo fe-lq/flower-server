@@ -5,7 +5,7 @@ import koaBody from 'koa-body';
  * @param path public下的文件夹
  * @returns
  */
-export const fileMiddles = () => {
+export function fileMiddles() {
   return [
     koaBody({
       multipart: true,
@@ -17,4 +17,4 @@ export const fileMiddles = () => {
       }
     })
   ];
-};
+}

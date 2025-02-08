@@ -1,0 +1,2562 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"CreateUserDto": {
+				"description": "用户基础数据传输对象",
+				"properties": {
+					"userName": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"description": "可选的邮箱地址"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double",
+						"description": "可选的权限ID"
+					},
+					"status": {
+						"type": "boolean",
+						"description": "用户状态标志"
+					}
+				},
+				"required": [
+					"userName",
+					"phone",
+					"password",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"LoginRequest": {
+				"description": "用户登录请求对象",
+				"properties": {
+					"phone": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"phone",
+					"password"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_any.string-or-number-or-any_": {
+				"properties": {},
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"CreateMenuDto": {
+				"properties": {
+					"icon": {
+						"type": "string"
+					},
+					"menuName": {
+						"type": "string"
+					},
+					"menuPath": {
+						"type": "string"
+					},
+					"permNode": {
+						"type": "number",
+						"format": "double"
+					},
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"parentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"menuName",
+					"menuPath",
+					"level",
+					"parentId",
+					"permissionId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SearchParams": {
+				"description": "用户搜索参数对象",
+				"properties": {
+					"userName": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"description": "可选的邮箱地址"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double",
+						"description": "可选的权限ID"
+					},
+					"status": {
+						"type": "boolean",
+						"description": "用户状态标志"
+					},
+					"page": {
+						"type": "number",
+						"format": "double"
+					},
+					"pageSize": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"userName",
+					"phone",
+					"password",
+					"status"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Partial_CreateUserDto_": {
+				"properties": {
+					"userName": {
+						"type": "string"
+					},
+					"phone": {
+						"type": "string"
+					},
+					"password": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string",
+						"description": "可选的邮箱地址"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double",
+						"description": "可选的权限ID"
+					},
+					"status": {
+						"type": "boolean",
+						"description": "用户状态标志"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"UploadResponse": {
+				"properties": {
+					"filename": {
+						"type": "string"
+					},
+					"path": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"filename",
+					"path"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PermissionDto": {
+				"properties": {
+					"userName": {
+						"type": "string"
+					},
+					"roleName": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"permissionScope": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"userName",
+					"roleName",
+					"members",
+					"permissionScope"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Pick_PermissionDto.Exclude_keyofPermissionDto.userName__": {
+				"properties": {
+					"roleName": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"permissionScope": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"roleName",
+					"members",
+					"permissionScope"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_PermissionDto.userName_": {
+				"$ref": "#/components/schemas/Pick_PermissionDto.Exclude_keyofPermissionDto.userName__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"Partial_PermissionDto_": {
+				"properties": {
+					"userName": {
+						"type": "string"
+					},
+					"roleName": {
+						"type": "string"
+					},
+					"members": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					},
+					"permissionScope": {
+						"items": {
+							"type": "number",
+							"format": "double"
+						},
+						"type": "array"
+					}
+				},
+				"type": "object",
+				"description": "Make all properties in T optional"
+			},
+			"UpdateMenuDto": {
+				"properties": {
+					"icon": {
+						"type": "string"
+					},
+					"menuName": {
+						"type": "string"
+					},
+					"menuPath": {
+						"type": "string"
+					},
+					"permNode": {
+						"type": "number",
+						"format": "double"
+					},
+					"level": {
+						"type": "number",
+						"format": "double"
+					},
+					"parentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"permissionId": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/UpdateMenuDto"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"menuName",
+					"menuPath",
+					"level",
+					"parentId",
+					"permissionId",
+					"id",
+					"children"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Required_Pick_GoodsTypes.typeParentId-or-typeEnable__": {
+				"properties": {
+					"typeEnable": {
+						"type": "boolean"
+					},
+					"typeParentId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"typeEnable",
+					"typeParentId"
+				],
+				"type": "object",
+				"description": "Make all properties in T required"
+			},
+			"GoodsTypes": {
+				"properties": {
+					"goods": {
+						"items": {
+							"$ref": "#/components/schemas/Goods"
+						},
+						"type": "array"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/GoodsTypes"
+						},
+						"type": "array"
+					},
+					"typeParent": {
+						"$ref": "#/components/schemas/GoodsTypes"
+					},
+					"typeParentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"typeEnable": {
+						"type": "boolean"
+					},
+					"typeImg": {
+						"type": "string"
+					},
+					"typeName": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"goods",
+					"children",
+					"typeEnable",
+					"typeName",
+					"id"
+				],
+				"type": "object"
+			},
+			"Comment": {
+				"properties": {
+					"goods": {
+						"$ref": "#/components/schemas/Goods"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
+					},
+					"parent": {
+						"$ref": "#/components/schemas/Comment"
+					},
+					"authorId": {
+						"type": "number",
+						"format": "double"
+					},
+					"parentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"content": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"goods",
+					"children",
+					"authorId",
+					"content",
+					"id",
+					"goodsId"
+				],
+				"type": "object"
+			},
+			"Goods": {
+				"properties": {
+					"orderGoods": {
+						"$ref": "#/components/schemas/OrderGoods"
+					},
+					"cartGoods": {
+						"$ref": "#/components/schemas/CartGoods"
+					},
+					"goodsComments": {
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
+					},
+					"goodsType": {
+						"$ref": "#/components/schemas/GoodsTypes"
+					},
+					"goodsUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsUser": {
+						"type": "string"
+					},
+					"goodsUpdate": {
+						"type": "string"
+					},
+					"goodsCreate": {
+						"type": "string"
+					},
+					"goodsIsDel": {
+						"type": "boolean"
+					},
+					"goodsSellCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsDesc": {
+						"type": "string"
+					},
+					"goodsOnSale": {
+						"type": "boolean"
+					},
+					"goodsTypeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsImgs": {
+						"type": "string"
+					},
+					"goodsAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsCostPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsMarkPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsName": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"goodsComments",
+					"goodsType",
+					"goodsUserId",
+					"goodsUser",
+					"goodsTypeId",
+					"goodsImgs",
+					"goodsCostPrice",
+					"goodsMarkPrice",
+					"goodsPrice",
+					"goodsName",
+					"id"
+				],
+				"type": "object"
+			},
+			"CartGoods": {
+				"properties": {
+					"goods": {
+						"$ref": "#/components/schemas/Goods"
+					},
+					"cart": {
+						"$ref": "#/components/schemas/Cart"
+					},
+					"goodsIsChecked": {
+						"type": "boolean"
+					},
+					"goodsCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsId": {
+						"type": "number",
+						"format": "double"
+					},
+					"cartId": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"goods",
+					"cart",
+					"goodsIsChecked",
+					"goodsCount",
+					"goodsId",
+					"cartId",
+					"id"
+				],
+				"type": "object"
+			},
+			"Cart": {
+				"properties": {
+					"cartGoods": {
+						"items": {
+							"$ref": "#/components/schemas/CartGoods"
+						},
+						"type": "array"
+					},
+					"cartUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"cartGoods",
+					"cartUserId",
+					"id"
+				],
+				"type": "object"
+			},
+			"OrderGoods": {
+				"properties": {
+					"order": {
+						"$ref": "#/components/schemas/Orders"
+					},
+					"goods": {
+						"$ref": "#/components/schemas/Goods"
+					},
+					"goodsCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsId": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderId": {
+						"type": "number",
+						"format": "double"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"order",
+					"goods",
+					"goodsCount",
+					"goodsId",
+					"orderId",
+					"id"
+				],
+				"type": "object"
+			},
+			"Orders": {
+				"properties": {
+					"orderGoods": {
+						"items": {
+							"$ref": "#/components/schemas/OrderGoods"
+						},
+						"type": "array"
+					},
+					"orderUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderUpdate": {
+						"type": "string"
+					},
+					"orderCreate": {
+						"type": "string"
+					},
+					"orderStatus": {
+						"type": "number",
+						"format": "double"
+					},
+					"orderComment": {
+						"type": "string"
+					},
+					"orderNo": {
+						"type": "string"
+					},
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"orderGoods",
+					"orderUserId",
+					"orderStatus",
+					"orderComment",
+					"orderNo",
+					"id"
+				],
+				"type": "object"
+			},
+			"Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__": {
+				"properties": {
+					"typeName": {
+						"type": "string"
+					},
+					"typeImg": {
+						"type": "string"
+					},
+					"typeEnable": {
+						"type": "boolean"
+					},
+					"typeParentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"typeParent": {
+						"$ref": "#/components/schemas/GoodsTypes"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/GoodsTypes"
+						},
+						"type": "array"
+					},
+					"goods": {
+						"items": {
+							"$ref": "#/components/schemas/Goods"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"typeName",
+					"typeEnable",
+					"children",
+					"goods"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_GoodsTypes.id_": {
+				"$ref": "#/components/schemas/Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"Required_Pick_Goods.goodsName-or-goodsOnSale__": {
+				"properties": {
+					"goodsName": {
+						"type": "string"
+					},
+					"goodsOnSale": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"goodsName",
+					"goodsOnSale"
+				],
+				"type": "object",
+				"description": "Make all properties in T required"
+			},
+			"Pick_Goods.Exclude_keyofGoods.id__": {
+				"properties": {
+					"goodsName": {
+						"type": "string"
+					},
+					"goodsOnSale": {
+						"type": "boolean"
+					},
+					"goodsPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsMarkPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsCostPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsAmount": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsImgs": {
+						"type": "string"
+					},
+					"goodsTypeId": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsDesc": {
+						"type": "string"
+					},
+					"goodsSellCount": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsIsDel": {
+						"type": "boolean"
+					},
+					"goodsCreate": {
+						"type": "string"
+					},
+					"goodsUpdate": {
+						"type": "string"
+					},
+					"goodsUser": {
+						"type": "string"
+					},
+					"goodsUserId": {
+						"type": "number",
+						"format": "double"
+					},
+					"goodsType": {
+						"$ref": "#/components/schemas/GoodsTypes"
+					},
+					"goodsComments": {
+						"items": {
+							"$ref": "#/components/schemas/Comment"
+						},
+						"type": "array"
+					},
+					"cartGoods": {
+						"$ref": "#/components/schemas/CartGoods"
+					},
+					"orderGoods": {
+						"$ref": "#/components/schemas/OrderGoods"
+					}
+				},
+				"required": [
+					"goodsName",
+					"goodsPrice",
+					"goodsMarkPrice",
+					"goodsCostPrice",
+					"goodsImgs",
+					"goodsTypeId",
+					"goodsUser",
+					"goodsUserId",
+					"goodsType",
+					"goodsComments"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_Goods.id_": {
+				"$ref": "#/components/schemas/Pick_Goods.Exclude_keyofGoods.id__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			}
+		},
+		"securitySchemes": {
+			"jwt": {
+				"type": "apiKey",
+				"name": "Authorization",
+				"in": "header"
+			}
+		}
+	},
+	"info": {
+		"title": "tsoa-api",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {
+			"name": "LiuQi"
+		}
+	},
+	"paths": {
+		"/users/register": {
+			"post": {
+				"operationId": "Register",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/login": {
+			"post": {
+				"operationId": "Login",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"user": {
+											"properties": {
+												"permissionId": {
+													"type": "number",
+													"format": "double"
+												},
+												"status": {
+													"type": "boolean"
+												},
+												"createDate": {
+													"type": "string",
+													"format": "date-time"
+												},
+												"email": {
+													"type": "string"
+												},
+												"phone": {
+													"type": "string"
+												},
+												"password": {
+													"type": "string"
+												},
+												"userName": {
+													"type": "string"
+												},
+												"userId": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"permissionId",
+												"status",
+												"createDate",
+												"email",
+												"phone",
+												"password",
+												"userName",
+												"userId"
+											],
+											"type": "object"
+										},
+										"token": {}
+									},
+									"required": [
+										"user",
+										"token"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/LoginRequest"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/logout": {
+			"get": {
+				"operationId": "LoginOut",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/info": {
+			"get": {
+				"operationId": "GetUserInfo",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"data": {
+											"properties": {
+												"menuList": {
+													"items": {
+														"$ref": "#/components/schemas/CreateMenuDto"
+													},
+													"type": "array"
+												},
+												"user": {
+													"$ref": "#/components/schemas/Pick_any.string-or-number-or-any_"
+												}
+											},
+											"required": [
+												"menuList",
+												"user"
+											],
+											"type": "object"
+										},
+										"message": {
+											"type": "string"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"data",
+										"message",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "header",
+						"name": "authorization",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/list": {
+			"post": {
+				"operationId": "GetUserList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"permissionId": {
+												"type": "number",
+												"format": "double"
+											},
+											"status": {
+												"type": "boolean"
+											},
+											"createDate": {
+												"type": "string",
+												"format": "date-time"
+											},
+											"email": {
+												"type": "string"
+											},
+											"phone": {
+												"type": "string"
+											},
+											"password": {
+												"type": "string"
+											},
+											"userName": {
+												"type": "string"
+											},
+											"userId": {
+												"type": "number",
+												"format": "double"
+											},
+											"permission": {
+												"properties": {
+													"roleName": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"roleName"
+												],
+												"type": "object"
+											},
+											"role": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"permissionId",
+											"status",
+											"createDate",
+											"email",
+											"phone",
+											"password",
+											"userName",
+											"userId",
+											"permission",
+											"role"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SearchParams"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/delete": {
+			"get": {
+				"operationId": "DeleteUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			}
+		},
+		"/users/update": {
+			"post": {
+				"operationId": "UpdateUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Partial_CreateUserDto_"
+									},
+									{
+										"properties": {
+											"userId": {
+												"type": "number",
+												"format": "double"
+											}
+										},
+										"required": [
+											"userId"
+										],
+										"type": "object"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/read": {
+			"get": {
+				"operationId": "GetUserDetail",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"permissionId": {
+											"type": "number",
+											"format": "double"
+										},
+										"status": {
+											"type": "boolean"
+										},
+										"createDate": {
+											"type": "string",
+											"format": "date-time"
+										},
+										"email": {
+											"type": "string"
+										},
+										"phone": {
+											"type": "string"
+										},
+										"userName": {
+											"type": "string"
+										},
+										"userId": {
+											"type": "number",
+											"format": "double"
+										},
+										"password": {}
+									},
+									"required": [
+										"permissionId",
+										"status",
+										"createDate",
+										"email",
+										"phone",
+										"userName",
+										"userId",
+										"password"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"用户接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "userId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/public/uploadFile": {
+			"post": {
+				"operationId": "UploadFile",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UploadResponse"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"description": "上传文件接口",
+				"tags": [
+					"公共接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"files": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"files"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/public/deleteFile": {
+			"delete": {
+				"operationId": "DeleteFile",
+				"responses": {
+					"200": {
+						"description": "Success"
+					},
+					"204": {
+						"description": "No content"
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"description": "删除文件接口",
+				"tags": [
+					"公共接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"filePath": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"filePath"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/permission/list": {
+			"post": {
+				"operationId": "GetPermissions",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"roleName": {
+												"type": "string"
+											},
+											"id": {
+												"type": "number",
+												"format": "double"
+											}
+										},
+										"required": [
+											"roleName",
+											"id"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"description": "获取权限列表",
+				"tags": [
+					"权限管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "查询参数",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/PermissionDto",
+								"description": "查询参数"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/permission/add": {
+			"post": {
+				"operationId": "AddPermission",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"roleName": {
+											"type": "string"
+										},
+										"id": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"roleName",
+										"id"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"description": "添加权限",
+				"tags": [
+					"权限管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "权限信息",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Omit_PermissionDto.userName_",
+								"description": "权限信息"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/permission/update": {
+			"post": {
+				"operationId": "UpdatePermission",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"roleName": {
+											"type": "string"
+										},
+										"id": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"roleName",
+										"id"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"description": "更新权限",
+				"tags": [
+					"权限管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"description": "权限更新数据",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Partial_PermissionDto_"
+									},
+									{
+										"properties": {
+											"id": {
+												"type": "number",
+												"format": "double"
+											}
+										},
+										"required": [
+											"id"
+										],
+										"type": "object"
+									}
+								],
+								"description": "权限更新数据"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/permission/delete": {
+			"get": {
+				"operationId": "DeletePermission",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"roleName": {
+											"type": "string"
+										},
+										"id": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"roleName",
+										"id"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"description": "删除权限",
+				"tags": [
+					"权限管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"description": "权限ID",
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/menu/icons": {
+			"get": {
+				"operationId": "GetIcons",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"label": {
+												"type": "string"
+											},
+											"path": {
+												"type": "string"
+											}
+										},
+										"required": [
+											"label",
+											"path"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/menu/icon/upload": {
+			"post": {
+				"operationId": "UploadIcon",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"buffer": {
+											"type": "string",
+											"format": "byte"
+										},
+										"filename": {
+											"type": "string"
+										},
+										"destination": {
+											"type": "string"
+										},
+										"stream": {
+											"type": "string",
+											"format": "byte"
+										},
+										"size": {
+											"type": "number",
+											"format": "double"
+										},
+										"mimetype": {
+											"type": "string"
+										},
+										"encoding": {
+											"type": "string"
+										},
+										"originalname": {
+											"type": "string"
+										},
+										"fieldname": {
+											"type": "string"
+										},
+										"path": {}
+									},
+									"required": [
+										"buffer",
+										"filename",
+										"destination",
+										"stream",
+										"size",
+										"mimetype",
+										"encoding",
+										"originalname",
+										"fieldname",
+										"path"
+									],
+									"type": "object"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Bad Request"
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"multipart/form-data": {
+							"schema": {
+								"type": "object",
+								"properties": {
+									"file": {
+										"type": "string",
+										"format": "binary"
+									}
+								},
+								"required": [
+									"file"
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/menu/icon/delete": {
+			"post": {
+				"operationId": "DeleteIcon",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"properties": {
+									"filePath": {
+										"type": "string"
+									}
+								},
+								"required": [
+									"filePath"
+								],
+								"type": "object"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/menu/add": {
+			"post": {
+				"operationId": "AddMenuItem",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateMenuDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/menu/list": {
+			"post": {
+				"operationId": "GetMenuList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/CreateMenuDto"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateMenuDto"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/menu/update": {
+			"post": {
+				"operationId": "UpdateMenuItem",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/CreateMenuDto"
+									},
+									{
+										"properties": {
+											"id": {
+												"type": "number",
+												"format": "double"
+											}
+										},
+										"required": [
+											"id"
+										],
+										"type": "object"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/menu/updateSort": {
+			"post": {
+				"operationId": "UpdateMenuSort",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"items": {
+									"$ref": "#/components/schemas/UpdateMenuDto"
+								},
+								"type": "array"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/menu/delete": {
+			"get": {
+				"operationId": "DeleteMenuItem",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"菜单管理"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/goods-type/list": {
+			"post": {
+				"operationId": "GetTypeList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"items": {
+												"properties": {
+													"children": {
+														"items": {
+															"properties": {
+																"typeParentId": {
+																	"type": "number",
+																	"format": "double"
+																},
+																"typeEnable": {
+																	"type": "boolean"
+																},
+																"typeImg": {
+																	"type": "string"
+																},
+																"typeName": {
+																	"type": "string"
+																},
+																"id": {
+																	"type": "number",
+																	"format": "double"
+																}
+															},
+															"required": [
+																"typeParentId",
+																"typeEnable",
+																"typeImg",
+																"typeName",
+																"id"
+															],
+															"type": "object"
+														},
+														"type": "array"
+													},
+													"typeParentId": {
+														"type": "number",
+														"format": "double"
+													},
+													"typeEnable": {
+														"type": "boolean"
+													},
+													"typeImg": {
+														"type": "string"
+													},
+													"typeName": {
+														"type": "string"
+													},
+													"id": {
+														"type": "number",
+														"format": "double"
+													},
+													"typeParentName": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"children",
+													"typeParentId",
+													"typeEnable",
+													"typeImg",
+													"typeName",
+													"id",
+													"typeParentName"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "获取商品类型列表",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Required_Pick_GoodsTypes.typeParentId-or-typeEnable__"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods-type/add": {
+			"post": {
+				"operationId": "AddType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"properties": {
+												"typeParentId": {
+													"type": "number",
+													"format": "double"
+												},
+												"typeEnable": {
+													"type": "boolean"
+												},
+												"typeImg": {
+													"type": "string"
+												},
+												"typeName": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"typeParentId",
+												"typeEnable",
+												"typeImg",
+												"typeName",
+												"id"
+											],
+											"type": "object"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "添加商品类型",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Omit_GoodsTypes.id_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods-type/update": {
+			"post": {
+				"operationId": "UpdateType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"properties": {
+												"typeParentId": {
+													"type": "number",
+													"format": "double"
+												},
+												"typeEnable": {
+													"type": "boolean"
+												},
+												"typeImg": {
+													"type": "string"
+												},
+												"typeName": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"typeParentId",
+												"typeEnable",
+												"typeImg",
+												"typeName",
+												"id"
+											],
+											"type": "object"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "更新商品类型",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GoodsTypes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods-type/delete": {
+			"get": {
+				"operationId": "DeleteType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"properties": {
+												"typeParentId": {
+													"type": "number",
+													"format": "double"
+												},
+												"typeEnable": {
+													"type": "boolean"
+												},
+												"typeImg": {
+													"type": "string"
+												},
+												"typeName": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"typeParentId",
+												"typeEnable",
+												"typeImg",
+												"typeName",
+												"id"
+											],
+											"type": "object"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "删除商品类型",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/goods/getList": {
+			"post": {
+				"operationId": "GetGoods",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"properties": {
+											"goodsUserId": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsUser": {
+												"type": "string"
+											},
+											"goodsUpdate": {
+												"type": "string",
+												"format": "date-time"
+											},
+											"goodsCreate": {
+												"type": "string",
+												"format": "date-time"
+											},
+											"goodsIsDel": {
+												"type": "boolean"
+											},
+											"goodsSellCount": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsDesc": {
+												"type": "string"
+											},
+											"goodsOnSale": {
+												"type": "boolean"
+											},
+											"goodsTypeId": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsAmount": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsCostPrice": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsMarkPrice": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsPrice": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsName": {
+												"type": "string"
+											},
+											"id": {
+												"type": "number",
+												"format": "double"
+											},
+											"goodsImgs": {
+												"items": {
+													"type": "string"
+												},
+												"type": "array"
+											}
+										},
+										"required": [
+											"goodsUserId",
+											"goodsUser",
+											"goodsUpdate",
+											"goodsCreate",
+											"goodsIsDel",
+											"goodsSellCount",
+											"goodsDesc",
+											"goodsOnSale",
+											"goodsTypeId",
+											"goodsAmount",
+											"goodsCostPrice",
+											"goodsMarkPrice",
+											"goodsPrice",
+											"goodsName",
+											"id",
+											"goodsImgs"
+										],
+										"type": "object"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"商品接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Required_Pick_Goods.goodsName-or-goodsOnSale__"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods/create": {
+			"post": {
+				"operationId": "CreateGoods",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"商品接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Omit_Goods.id_"
+									},
+									{
+										"properties": {
+											"goodsImgs": {
+												"items": {
+													"type": "string"
+												},
+												"type": "array"
+											}
+										},
+										"required": [
+											"goodsImgs"
+										],
+										"type": "object"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods/update": {
+			"post": {
+				"operationId": "UpdateGoods",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"商品接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"allOf": [
+									{
+										"$ref": "#/components/schemas/Goods"
+									},
+									{
+										"properties": {
+											"goodsImgs": {
+												"items": {
+													"type": "string"
+												},
+												"type": "array"
+											}
+										},
+										"required": [
+											"goodsImgs"
+										],
+										"type": "object"
+									}
+								]
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods/delete": {
+			"get": {
+				"operationId": "DeleteGoods",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"tags": [
+					"商品接口"
+				],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

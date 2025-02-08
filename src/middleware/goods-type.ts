@@ -2,6 +2,12 @@ import type Koa from 'koa';
 import { goodsTypeServers } from '../services/goods-type';
 import { emitError } from '../utils/error';
 import { BAD_REQUEST } from '../constants';
+
+/**
+ * 验证商品类型是否存在
+ * @param ctx
+ * @param next
+ */
 export const validateGoodsTypeUpdate = async (ctx: Koa.Context, next: Koa.Next) => {
   const { id } = ctx.request.body as any;
   const { children, goods } = (await goodsTypeServers.getTypes({ id }))[0];
@@ -17,6 +23,11 @@ export const validateGoodsTypeUpdate = async (ctx: Koa.Context, next: Koa.Next) 
   }
 };
 
+/**
+ * 验证商品类型是否存在
+ * @param ctx
+ * @param next
+ */
 export const validateGoodsType = async (ctx: Koa.Context, next: Koa.Next) => {
   const { typeName } = ctx.request.body as any;
   const goodsType = (await goodsTypeServers.getTypes({ typeName }))[0];

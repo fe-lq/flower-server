@@ -1,12 +1,12 @@
 import { omit } from 'lodash';
-import db, { Goods } from '../db';
-import { RequiredPick } from '../types/common';
+import db from '../db';
+import { Goods } from '../types/prismaTypes';
 class GoodsServers {
   /**
    * 查询商品接口
    * @param params
    */
-  getGoods = async (params: RequiredPick<Goods, 'goodsName' | 'goodsOnSale'>) =>
+  getGoods = async (params: Required<Pick<Goods, 'goodsName' | 'goodsOnSale'>>) =>
     await db.goods.findMany({
       where: {
         ...params,
@@ -21,16 +21,42 @@ class GoodsServers {
    * 添加商品接口
    * @param data
    */
-  addGoods = async (data: Goods): Promise<Goods> => await db.goods.create({ data });
+  addGoods = async (data: Omit<Goods, 'id'> & { goodsImgs: string[] }) =>
+    await db.goods.create({
+      data: {
+        ...omit(data, ['goodsImgs', 'goodsTypeId', 'cartGoods', 'orderGoods', 'goodsComments']),
+        goodsImgs: data.goodsImgs.join(','),
+        goodsType: {
+          connect: {
+            id: data.goodsTypeId
+          }
+        }
+      }
+    });
 
   /**
    * 更新商品接口
    * @param params
    */
-  updateGoods = async (data: Goods): Promise<Goods> =>
+  updateGoods = async (data: Goods & { goodsImgs: string[] }) =>
     await db.goods.update({
       where: { id: data.id },
-      data: omit(data, 'id')
+      data: {
+        ...omit(data, [
+          'goodsImgs',
+          'goodsTypeId',
+          'cartGoods',
+          'orderGoods',
+          'goodsComments',
+          'id'
+        ]),
+        goodsImgs: data.goodsImgs.join(','),
+        goodsType: {
+          connect: {
+            id: data.goodsTypeId
+          }
+        }
+      }
     });
 
   /**
@@ -48,7 +74,7 @@ class GoodsServers {
    * 删除商品接口
    * @param params
    */
-  deleteGoods = async (id: number): Promise<Goods> =>
+  deleteGoods = async (id: number) =>
     await db.goods.delete({
       where: { id }
     });
@@ -56,7 +82,6 @@ class GoodsServers {
   /**
    * 查找单个商品
    */
-  findOneGoods = async (id: number): Promise<Goods | null> =>
-    await db.goods.findUnique({ where: { id } });
+  findOneGoods = async (id: number) => await db.goods.findUnique({ where: { id } });
 }
 export const goodsServers = new GoodsServers();

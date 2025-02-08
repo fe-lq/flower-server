@@ -1,189 +1,147 @@
-import type Koa from 'koa';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  Route,
+  Security,
+  Header,
+  Hidden,
+  Tags
+} from '@tsoa/runtime';
 import { userServers } from '../services/user';
-import { emitError } from '../utils/error';
-import { BAD_REQUEST, JWT_SECRET_KEY, TOKEN_EXPIRED_TIME } from '../constants';
-import JWT from 'jsonwebtoken';
+import { JWT_SECRET_KEY, TOKEN_EXPIRED_TIME } from '../constants';
+import JWT, { JwtPayload } from 'jsonwebtoken';
 import { genEncryptPsw, getPasswordHash } from '../utils';
 import { omit } from 'lodash';
 import { menuServers } from '../services/menu';
-import { Permission, Users } from '@prisma/client';
 import { redisClient } from '../redis';
+import { LoginRequest, CreateUserDto, SearchParams } from '../dto/user.dto';
 
-class UserController {
-  // 注册
-  async register(ctx: Koa.Context) {
-    const requestParams = ctx.request.body;
-    try {
-      const user = await userServers.getUserDetail({
-        phone: requestParams.phone
-      });
-      if (user) {
-        emitError(ctx, new Error('当前手机号已注册'), BAD_REQUEST);
-      } else {
-        const pwdHex = getPasswordHash(requestParams.password);
-        await userServers.register({ ...requestParams, password: pwdHex });
-        ctx.body = {
-          code: 0,
-          message: 'success'
-        };
-        ctx.response.status = 200;
-      }
-    } catch (error) {
-      emitError(ctx, error);
+@Tags('用户接口')
+@Route('users')
+export class UserController extends Controller {
+  @Post('register')
+  async register(@Body() requestParams: CreateUserDto) {
+    const user = await userServers.getUserDetail({
+      phone: requestParams.phone
+    });
+
+    if (user) {
+      throw new Error('当前手机号已注册');
     }
+
+    const pwdHex = getPasswordHash(requestParams.password);
+    await userServers.register({
+      ...requestParams,
+      password: pwdHex,
+      createDate: new Date()
+    });
   }
 
-  // 登录
-  async login(ctx: Koa.Context) {
-    const { password, phone } = ctx.request.body;
-    try {
-      const user = await userServers.getUserDetail({
-        phone
-      });
-      if (user) {
-        const pwdHex = getPasswordHash(password);
-        if (user.password !== pwdHex) {
-          emitError(ctx, new Error('密码错误'), BAD_REQUEST);
-        } else if (user.phone !== phone) {
-          emitError(ctx, new Error('手机号错误'), BAD_REQUEST);
-        } else if (!user.status) {
-          emitError(ctx, new Error('该用户已被禁用，请联系其他管理员开启'), BAD_REQUEST);
-        } else {
-          const token = JWT.sign({ password: pwdHex, phone }, JWT_SECRET_KEY, {
-            expiresIn: TOKEN_EXPIRED_TIME
-          });
-          ctx.body = {
-            code: 0,
-            data: {
-              token,
-              user
-            },
-            message: 'success'
-          };
-          ctx.status = 200;
-        }
-      } else {
-        emitError(ctx, new Error('用户不存在'), BAD_REQUEST);
-      }
-    } catch (error) {
-      emitError(ctx, error);
+  @Post('login')
+  async login(@Body() params: LoginRequest) {
+    const { password, phone } = params;
+    const user = await userServers.getUserDetail({ phone });
+
+    if (!user) {
+      throw new Error('用户不存在');
     }
+
+    const pwdHex = getPasswordHash(password);
+    if (user.password !== pwdHex) {
+      throw new Error('密码错误');
+    }
+    if (user.phone !== phone) {
+      throw new Error('手机号错误');
+    }
+    if (!user.status) {
+      throw new Error('该用户已被禁用，请联系其他管理员开启');
+    }
+
+    const token = JWT.sign({ password: pwdHex, phone }, JWT_SECRET_KEY, {
+      expiresIn: TOKEN_EXPIRED_TIME
+    });
+
+    return { token, user };
   }
 
-  // 退出登录
-  loginOut = async (ctx: Koa.Context) => {
-    try {
-      const token = ctx.header.authorization;
-      const { user, exp, iat } = await this.getUserByToken(token);
-      await redisClient.setValue(token, user.phone, exp - iat);
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
-  };
+  @Get('logout')
+  @Security('jwt')
+  async loginOut(@Header('authorization') token: string) {
+    const { user, exp, iat } = await this.getUserByToken(token);
+    await redisClient.setValue(token, user.phone, exp - iat);
+  }
 
-  getUserInfo = async (ctx: Koa.Context) => {
-    const token = ctx.header.authorization;
-    try {
-      const { user } = await this.getUserByToken(token);
-      // 如果是超级管理员角色就返回全部菜单
-      const menuList = await menuServers.getPermMenus({
-        permissionId: user.permissionId === 1 ? undefined : user.permissionId
-      });
-      ctx.body = {
-        code: 0,
-        data: {
-          user: omit(user, 'password'),
-          menuList
-        },
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
-  };
+  @Get('info')
+  @Security('jwt')
+  async getUserInfo(@Header('authorization') token: string) {
+    const { user } = await this.getUserByToken(token);
+    const menuList = await menuServers.getPermMenus({
+      permissionId: user.permissionId === 1 ? undefined : user.permissionId
+    });
 
-  // 根据有效token获取用户信息
-  async getUserByToken(token: string) {
-    const { password, phone, exp, iat } = JWT.verify(token.split(' ')[1], JWT_SECRET_KEY) as any;
+    return {
+      code: 0,
+      message: 'success',
+      data: {
+        user: omit(user, 'password'),
+        menuList
+      }
+    };
+  }
+
+  @Post('list')
+  @Security('jwt')
+  async getUserList(@Body() searchParams: SearchParams) {
+    const data = await userServers.getUserList(searchParams);
+
+    return data.map((user) => ({
+      ...user,
+      role: user.permission?.roleName
+    }));
+  }
+
+  @Get('delete')
+  @Security('jwt')
+  async deleteUser(@Query() userId: string) {
+    await userServers.deleteUser(Number(userId));
+  }
+
+  @Post('update')
+  @Security('jwt')
+  async updateUser(@Body() requestParams: Partial<CreateUserDto> & { userId: number }) {
+    const pwdHex = getPasswordHash(requestParams.password);
+    await userServers.updateUser({
+      ...requestParams,
+      password: pwdHex,
+      userId: requestParams.userId
+    });
+  }
+
+  @Get('read')
+  @Security('jwt')
+  async getUserDetail(@Query() userId: number) {
+    const data = await userServers.getUserDetail({
+      userId: Number(userId)
+    });
+    const password = genEncryptPsw(data.password);
+
+    return { ...data, password };
+  }
+
+  @Hidden()
+  async getUserByToken(token: string): Promise<any> {
+    const { password, phone, exp, iat } = JWT.verify(
+      token.split(' ')[1],
+      JWT_SECRET_KEY
+    ) as JwtPayload;
     const user = await userServers.getUserDetail({
       phone,
       password
     });
-    return { user, exp, iat };
-  }
-
-  async getUserList(ctx: Koa.Context) {
-    const searchParams = ctx.request.body ?? {};
-    try {
-      const data = (await userServers.getUserList(searchParams)) as (Users & {
-        permission: Permission;
-      })[];
-      ctx.body = {
-        code: 0,
-        data: data.map((user) => ({
-          ...user,
-          role: user.permission?.roleName
-        })),
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
-  }
-
-  async deleteUser(ctx: Koa.Context) {
-    const { userId } = ctx.query;
-    try {
-      await userServers.deleteUser(Number(userId));
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
-  }
-
-  async updateUser(ctx: Koa.Context) {
-    const requestParams = ctx.request.body;
-    const pwdHex = getPasswordHash(requestParams.password);
-    try {
-      await userServers.updateUser({ ...requestParams, password: pwdHex });
-      ctx.body = {
-        code: 0,
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
-  }
-
-  // 根据用户id读取用户信息
-  async getUserDetail(ctx: Koa.Context) {
-    const { userId } = ctx.query;
-    try {
-      const data = await userServers.getUserDetail({
-        userId: Number(userId)
-      });
-      const password = genEncryptPsw(data.password);
-      ctx.body = {
-        code: 0,
-        data: { ...data, password },
-        message: 'success'
-      };
-      ctx.status = 200;
-    } catch (error) {
-      emitError(ctx, error);
-    }
+    return { user, exp: Number(exp), iat: Number(iat) };
   }
 }
 
