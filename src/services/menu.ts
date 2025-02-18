@@ -1,7 +1,9 @@
 import { omit } from 'lodash';
-import db from '../db';
+import db, { Prisma } from '../db';
 import { publicServers } from './public';
 import { CreateMenuDto, UpdateMenuDto } from '../dto/menu.dto';
+import { Menu } from '../types/prismaTypes';
+import { MenuRules } from '../middleware';
 
 const iconConfig = {
   gold: '金币',
@@ -121,13 +123,16 @@ class MenuServers {
 
   /** 查询单条数据校验 */
   getMenuItem = async (
-    data: CreateMenuDto,
-    key: string
+    data: Partial<Menu>,
+    key: keyof typeof MenuRules
   ): Promise<CreateMenuDto & { key?: string }> => {
     const res = await db.menu.findUnique({
       where: {
-        [key]: data[key]
-      } as CreateMenuDto
+        [key]: data[key],
+        NOT: {
+          id: data.id
+        }
+      } as unknown as Prisma.MenuWhereUniqueInput
     });
     return res ? Object.assign(res, { key }) : res;
   };

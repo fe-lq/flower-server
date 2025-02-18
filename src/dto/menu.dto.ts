@@ -19,10 +19,10 @@ export class CreateMenuDto {
   level: number;
 
   @IsNumber()
-  parentId: number;
+  parentId?: number;
 
   @IsNumber()
-  permissionId: number;
+  permissionId?: number;
 }
 
 export class UpdateMenuDto extends CreateMenuDto {

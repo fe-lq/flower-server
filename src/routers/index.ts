@@ -12,20 +12,12 @@ import { PermController } from './../controller/permission';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { MenuController } from './../controller/menu';
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-import { GoodsTypeController } from './../controller/goods-type';
-// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 import { GoodsController } from './../controller/goods';
-import { koaAuthentication } from './../middleware/authentication';
-// @ts-ignore - no great way to install types from subpackage
+// WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+import { GoodsTypeController } from './../controller/goods-type';
 import type { Context, Next, Middleware, Request as KRequest, Response as KResponse } from 'koa';
 import type * as KoaRouter from '@koa/router';
 const multer = require('@koa/multer');
-const koaAuthenticationRecasted = koaAuthentication as (
-  req: KRequest,
-  securityName: string,
-  scopes?: string[],
-  res?: KResponse
-) => Promise<any>;
 
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
@@ -52,7 +44,7 @@ const models: TsoaRoute.Models = {
     additionalProperties: false
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  'Pick_any.string-or-number-or-any_': {
+  'Pick_UserInfo.userId-or-phone-or-userName-or-email-or-createDate-or-status-or-permissionId_': {
     dataType: 'refAlias',
     type: { dataType: 'nestedObjectLiteral', nestedProperties: {}, validators: {} }
   },
@@ -65,8 +57,8 @@ const models: TsoaRoute.Models = {
       menuPath: { dataType: 'string', required: true },
       permNode: { dataType: 'double' },
       level: { dataType: 'double', required: true },
-      parentId: { dataType: 'double', required: true },
-      permissionId: { dataType: 'double', required: true }
+      parentId: { dataType: 'double' },
+      permissionId: { dataType: 'double' }
     },
     additionalProperties: false
   },
@@ -162,8 +154,8 @@ const models: TsoaRoute.Models = {
       menuPath: { dataType: 'string', required: true },
       permNode: { dataType: 'double' },
       level: { dataType: 'double', required: true },
-      parentId: { dataType: 'double', required: true },
-      permissionId: { dataType: 'double', required: true },
+      parentId: { dataType: 'double' },
+      permissionId: { dataType: 'double' },
       id: { dataType: 'double', required: true },
       children: {
         dataType: 'array',
@@ -174,13 +166,13 @@ const models: TsoaRoute.Models = {
     additionalProperties: false
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  'Required_Pick_GoodsTypes.typeParentId-or-typeEnable__': {
+  'Required_Pick_Goods.goodsName-or-goodsOnSale__': {
     dataType: 'refAlias',
     type: {
       dataType: 'nestedObjectLiteral',
       nestedProperties: {
-        typeEnable: { dataType: 'boolean', required: true },
-        typeParentId: { dataType: 'double', required: true }
+        goodsName: { dataType: 'string', required: true },
+        goodsOnSale: { dataType: 'boolean', required: true }
       },
       validators: {}
     }
@@ -336,44 +328,6 @@ const models: TsoaRoute.Models = {
     }
   },
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  'Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__': {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'nestedObjectLiteral',
-      nestedProperties: {
-        typeName: { dataType: 'string', required: true },
-        typeImg: { dataType: 'string' },
-        typeEnable: { dataType: 'boolean', required: true },
-        typeParentId: { dataType: 'double' },
-        typeParent: { ref: 'GoodsTypes' },
-        children: {
-          dataType: 'array',
-          array: { dataType: 'refAlias', ref: 'GoodsTypes' },
-          required: true
-        },
-        goods: { dataType: 'array', array: { dataType: 'refAlias', ref: 'Goods' }, required: true }
-      },
-      validators: {}
-    }
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  'Omit_GoodsTypes.id_': {
-    dataType: 'refAlias',
-    type: { ref: 'Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__', validators: {} }
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  'Required_Pick_Goods.goodsName-or-goodsOnSale__': {
-    dataType: 'refAlias',
-    type: {
-      dataType: 'nestedObjectLiteral',
-      nestedProperties: {
-        goodsName: { dataType: 'string', required: true },
-        goodsOnSale: { dataType: 'boolean', required: true }
-      },
-      validators: {}
-    }
-  },
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   'Pick_Goods.Exclude_keyofGoods.id__': {
     dataType: 'refAlias',
     type: {
@@ -410,6 +364,44 @@ const models: TsoaRoute.Models = {
   'Omit_Goods.id_': {
     dataType: 'refAlias',
     type: { ref: 'Pick_Goods.Exclude_keyofGoods.id__', validators: {} }
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  'Required_Pick_GoodsTypes.typeParentId-or-typeEnable__': {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'nestedObjectLiteral',
+      nestedProperties: {
+        typeEnable: { dataType: 'boolean', required: true },
+        typeParentId: { dataType: 'double', required: true }
+      },
+      validators: {}
+    }
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  'Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__': {
+    dataType: 'refAlias',
+    type: {
+      dataType: 'nestedObjectLiteral',
+      nestedProperties: {
+        goods: { dataType: 'array', array: { dataType: 'refAlias', ref: 'Goods' }, required: true },
+        typeName: { dataType: 'string', required: true },
+        typeImg: { dataType: 'string' },
+        typeEnable: { dataType: 'boolean', required: true },
+        typeParentId: { dataType: 'double' },
+        typeParent: { ref: 'GoodsTypes' },
+        children: {
+          dataType: 'array',
+          array: { dataType: 'refAlias', ref: 'GoodsTypes' },
+          required: true
+        }
+      },
+      validators: {}
+    }
+  },
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  'Omit_GoodsTypes.id_': {
+    dataType: 'refAlias',
+    type: { ref: 'Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__', validators: {} }
   }
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 };
@@ -503,7 +495,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/users/logout',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(UserController),
     ...fetchMiddlewares<Middleware>(UserController.prototype.loginOut),
 
@@ -539,7 +530,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/users/info',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(UserController),
     ...fetchMiddlewares<Middleware>(UserController.prototype.getUserInfo),
 
@@ -575,7 +565,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/users/list',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(UserController),
     ...fetchMiddlewares<Middleware>(UserController.prototype.getUserList),
 
@@ -611,7 +600,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/users/delete',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(UserController),
     ...fetchMiddlewares<Middleware>(UserController.prototype.deleteUser),
 
@@ -659,7 +647,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/users/update',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(UserController),
     ...fetchMiddlewares<Middleware>(UserController.prototype.updateUser),
 
@@ -695,7 +682,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/users/read',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(UserController),
     ...fetchMiddlewares<Middleware>(UserController.prototype.getUserDetail),
 
@@ -731,7 +717,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/public/uploadFile',
-    authenticateMiddleware([{ jwt: [] }]),
     upload.fields([
       {
         name: 'files',
@@ -779,7 +764,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.delete(
     '/public/deleteFile',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(PublicController),
     ...fetchMiddlewares<Middleware>(PublicController.prototype.deleteFile),
 
@@ -815,7 +799,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/permission/list',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(PermController),
     ...fetchMiddlewares<Middleware>(PermController.prototype.getPermissions),
 
@@ -851,7 +834,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/permission/add',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(PermController),
     ...fetchMiddlewares<Middleware>(PermController.prototype.addPermission),
 
@@ -899,7 +881,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/permission/update',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(PermController),
     ...fetchMiddlewares<Middleware>(PermController.prototype.updatePermission),
 
@@ -935,7 +916,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/permission/delete',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(PermController),
     ...fetchMiddlewares<Middleware>(PermController.prototype.deletePermission),
 
@@ -969,7 +949,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   const argsMenuController_getIcons: Record<string, TsoaRoute.ParameterSchema> = {};
   router.get(
     '/menu/icons',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.getIcons),
 
@@ -1005,7 +984,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/menu/icon/upload',
-    authenticateMiddleware([{ jwt: [] }]),
     upload.fields([
       {
         name: 'file',
@@ -1053,7 +1031,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/menu/icon/delete',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.deleteIcon),
 
@@ -1089,7 +1066,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/menu/add',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.addMenuItem),
 
@@ -1121,11 +1097,10 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsMenuController_getMenuList: Record<string, TsoaRoute.ParameterSchema> = {
-    data: { in: 'body', name: 'data', required: true, ref: 'CreateMenuDto' }
+    data: { in: 'body', name: 'data', ref: 'CreateMenuDto' }
   };
   router.post(
     '/menu/list',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.getMenuList),
 
@@ -1173,7 +1148,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/menu/update',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.updateMenuItem),
 
@@ -1215,7 +1189,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/menu/updateSort',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.updateMenuSort),
 
@@ -1251,7 +1224,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/menu/delete',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(MenuController),
     ...fetchMiddlewares<Middleware>(MenuController.prototype.deleteMenuItem),
 
@@ -1282,155 +1254,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsGoodsTypeController_getTypeList: Record<string, TsoaRoute.ParameterSchema> = {
-    requestParams: {
-      in: 'body',
-      name: 'requestParams',
-      required: true,
-      ref: 'Required_Pick_GoodsTypes.typeParentId-or-typeEnable__'
-    }
-  };
-  router.post(
-    '/goods-type/list',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.getTypeList),
-
-    async function GoodsTypeController_getTypeList(context: Context, next: Next) {
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsGoodsTypeController_getTypeList,
-          context,
-          next
-        });
-      } catch (err) {
-        const error = err as any;
-        error.message ||= JSON.stringify({ fields: error.fields });
-        context.status = error.status;
-        context.throw(context.status, error.message, error);
-      }
-
-      const controller = new GoodsTypeController();
-
-      return templateService.apiHandler({
-        methodName: 'getTypeList',
-        controller,
-        context,
-        validatedArgs,
-        successStatus: undefined
-      });
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsGoodsTypeController_addType: Record<string, TsoaRoute.ParameterSchema> = {
-    requestParams: { in: 'body', name: 'requestParams', required: true, ref: 'Omit_GoodsTypes.id_' }
-  };
-  router.post(
-    '/goods-type/add',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.addType),
-
-    async function GoodsTypeController_addType(context: Context, next: Next) {
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsGoodsTypeController_addType,
-          context,
-          next
-        });
-      } catch (err) {
-        const error = err as any;
-        error.message ||= JSON.stringify({ fields: error.fields });
-        context.status = error.status;
-        context.throw(context.status, error.message, error);
-      }
-
-      const controller = new GoodsTypeController();
-
-      return templateService.apiHandler({
-        methodName: 'addType',
-        controller,
-        context,
-        validatedArgs,
-        successStatus: undefined
-      });
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsGoodsTypeController_updateType: Record<string, TsoaRoute.ParameterSchema> = {
-    requestParams: { in: 'body', name: 'requestParams', required: true, ref: 'GoodsTypes' }
-  };
-  router.post(
-    '/goods-type/update',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.updateType),
-
-    async function GoodsTypeController_updateType(context: Context, next: Next) {
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsGoodsTypeController_updateType,
-          context,
-          next
-        });
-      } catch (err) {
-        const error = err as any;
-        error.message ||= JSON.stringify({ fields: error.fields });
-        context.status = error.status;
-        context.throw(context.status, error.message, error);
-      }
-
-      const controller = new GoodsTypeController();
-
-      return templateService.apiHandler({
-        methodName: 'updateType',
-        controller,
-        context,
-        validatedArgs,
-        successStatus: undefined
-      });
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-  const argsGoodsTypeController_deleteType: Record<string, TsoaRoute.ParameterSchema> = {
-    id: { in: 'query', name: 'id', required: true, dataType: 'double' }
-  };
-  router.get(
-    '/goods-type/delete',
-    authenticateMiddleware([{ jwt: [] }]),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController),
-    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.deleteType),
-
-    async function GoodsTypeController_deleteType(context: Context, next: Next) {
-      let validatedArgs: any[] = [];
-      try {
-        validatedArgs = templateService.getValidatedArgs({
-          args: argsGoodsTypeController_deleteType,
-          context,
-          next
-        });
-      } catch (err) {
-        const error = err as any;
-        error.message ||= JSON.stringify({ fields: error.fields });
-        context.status = error.status;
-        context.throw(context.status, error.message, error);
-      }
-
-      const controller = new GoodsTypeController();
-
-      return templateService.apiHandler({
-        methodName: 'deleteType',
-        controller,
-        context,
-        validatedArgs,
-        successStatus: undefined
-      });
-    }
-  );
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
   const argsGoodsController_getGoods: Record<string, TsoaRoute.ParameterSchema> = {
     requestParams: {
       in: 'body',
@@ -1441,7 +1264,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/goods/getList',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(GoodsController),
     ...fetchMiddlewares<Middleware>(GoodsController.prototype.getGoods),
 
@@ -1491,7 +1313,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/goods/create',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(GoodsController),
     ...fetchMiddlewares<Middleware>(GoodsController.prototype.createGoods),
 
@@ -1541,7 +1362,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.post(
     '/goods/update',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(GoodsController),
     ...fetchMiddlewares<Middleware>(GoodsController.prototype.updateGoods),
 
@@ -1577,7 +1397,6 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
   };
   router.get(
     '/goods/delete',
-    authenticateMiddleware([{ jwt: [] }]),
     ...fetchMiddlewares<Middleware>(GoodsController),
     ...fetchMiddlewares<Middleware>(GoodsController.prototype.deleteGoods),
 
@@ -1608,88 +1427,151 @@ export function RegisterRoutes(router: KoaRouter, opts?: { multer?: ReturnType<t
     }
   );
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsGoodsTypeController_getTypeList: Record<string, TsoaRoute.ParameterSchema> = {
+    requestParams: {
+      in: 'body',
+      name: 'requestParams',
+      required: true,
+      ref: 'Required_Pick_GoodsTypes.typeParentId-or-typeEnable__'
+    }
+  };
+  router.post(
+    '/goods-type/list',
+    ...fetchMiddlewares<Middleware>(GoodsTypeController),
+    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.getTypeList),
 
-  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-  function authenticateMiddleware(security: TsoaRoute.Security[] = []) {
-    return async function runAuthenticationMiddleware(context: any, next: any) {
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      // keep track of failed auth attempts so we can hand back the most
-      // recent one.  This behavior was previously existing so preserving it
-      // here
-      const failedAttempts: any[] = [];
-      const pushAndRethrow = (error: any) => {
-        failedAttempts.push(error);
-        throw error;
-      };
-
-      const secMethodOrPromises: Promise<any>[] = [];
-      for (const secMethod of security) {
-        if (Object.keys(secMethod).length > 1) {
-          const secMethodAndPromises: Promise<any>[] = [];
-
-          for (const name in secMethod) {
-            secMethodAndPromises.push(
-              koaAuthenticationRecasted(
-                context.request,
-                name,
-                secMethod[name],
-                context.response
-              ).catch(pushAndRethrow)
-            );
-          }
-
-          secMethodOrPromises.push(
-            Promise.all(secMethodAndPromises).then((users) => {
-              return users[0];
-            })
-          );
-        } else {
-          for (const name in secMethod) {
-            secMethodOrPromises.push(
-              koaAuthenticationRecasted(
-                context.request,
-                name,
-                secMethod[name],
-                context.response
-              ).catch(pushAndRethrow)
-            );
-          }
-        }
-      }
-
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-
-      let success;
+    async function GoodsTypeController_getTypeList(context: Context, next: Next) {
+      let validatedArgs: any[] = [];
       try {
-        const user = await Promise.any(secMethodOrPromises);
-        success = true;
-        context.request['user'] = user;
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsGoodsTypeController_getTypeList,
+          context,
+          next
+        });
       } catch (err) {
-        // Response was sent in middleware, abort
-        if (context.response.body) {
-          return;
-        }
-
-        // Show most recent error as response
-        const error = failedAttempts.pop();
-        context.status = error.status || 401;
+        const error = err as any;
+        error.message ||= JSON.stringify({ fields: error.fields });
+        context.status = error.status;
         context.throw(context.status, error.message, error);
       }
 
-      // Response was sent in middleware, abort
-      if (context.response.body) {
-        return;
+      const controller = new GoodsTypeController();
+
+      return templateService.apiHandler({
+        methodName: 'getTypeList',
+        controller,
+        context,
+        validatedArgs,
+        successStatus: undefined
+      });
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsGoodsTypeController_addType: Record<string, TsoaRoute.ParameterSchema> = {
+    requestParams: { in: 'body', name: 'requestParams', required: true, ref: 'Omit_GoodsTypes.id_' }
+  };
+  router.post(
+    '/goods-type/add',
+    ...fetchMiddlewares<Middleware>(GoodsTypeController),
+    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.addType),
+
+    async function GoodsTypeController_addType(context: Context, next: Next) {
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsGoodsTypeController_addType,
+          context,
+          next
+        });
+      } catch (err) {
+        const error = err as any;
+        error.message ||= JSON.stringify({ fields: error.fields });
+        context.status = error.status;
+        context.throw(context.status, error.message, error);
       }
 
-      if (success) {
-        await next();
+      const controller = new GoodsTypeController();
+
+      return templateService.apiHandler({
+        methodName: 'addType',
+        controller,
+        context,
+        validatedArgs,
+        successStatus: undefined
+      });
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsGoodsTypeController_updateType: Record<string, TsoaRoute.ParameterSchema> = {
+    requestParams: { in: 'body', name: 'requestParams', required: true, ref: 'GoodsTypes' }
+  };
+  router.post(
+    '/goods-type/update',
+    ...fetchMiddlewares<Middleware>(GoodsTypeController),
+    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.updateType),
+
+    async function GoodsTypeController_updateType(context: Context, next: Next) {
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsGoodsTypeController_updateType,
+          context,
+          next
+        });
+      } catch (err) {
+        const error = err as any;
+        error.message ||= JSON.stringify({ fields: error.fields });
+        context.status = error.status;
+        context.throw(context.status, error.message, error);
       }
 
-      // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    };
-  }
+      const controller = new GoodsTypeController();
+
+      return templateService.apiHandler({
+        methodName: 'updateType',
+        controller,
+        context,
+        validatedArgs,
+        successStatus: undefined
+      });
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+  const argsGoodsTypeController_deleteType: Record<string, TsoaRoute.ParameterSchema> = {
+    id: { in: 'query', name: 'id', required: true, dataType: 'double' }
+  };
+  router.get(
+    '/goods-type/delete',
+    ...fetchMiddlewares<Middleware>(GoodsTypeController),
+    ...fetchMiddlewares<Middleware>(GoodsTypeController.prototype.deleteType),
+
+    async function GoodsTypeController_deleteType(context: Context, next: Next) {
+      let validatedArgs: any[] = [];
+      try {
+        validatedArgs = templateService.getValidatedArgs({
+          args: argsGoodsTypeController_deleteType,
+          context,
+          next
+        });
+      } catch (err) {
+        const error = err as any;
+        error.message ||= JSON.stringify({ fields: error.fields });
+        context.status = error.status;
+        context.throw(context.status, error.message, error);
+      }
+
+      const controller = new GoodsTypeController();
+
+      return templateService.apiHandler({
+        methodName: 'deleteType',
+        controller,
+        context,
+        validatedArgs,
+        successStatus: undefined
+      });
+    }
+  );
+  // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
   // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 }

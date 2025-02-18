@@ -59,7 +59,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Pick_any.string-or-number-or-any_": {
+			"Pick_UserInfo.userId-or-phone-or-userName-or-email-or-createDate-or-status-or-permissionId_": {
 				"properties": {},
 				"type": "object",
 				"description": "From T, pick a set of properties whose keys are in the union K"
@@ -95,9 +95,7 @@
 				"required": [
 					"menuName",
 					"menuPath",
-					"level",
-					"parentId",
-					"permissionId"
+					"level"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -321,27 +319,24 @@
 					"menuName",
 					"menuPath",
 					"level",
-					"parentId",
-					"permissionId",
 					"id",
 					"children"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Required_Pick_GoodsTypes.typeParentId-or-typeEnable__": {
+			"Required_Pick_Goods.goodsName-or-goodsOnSale__": {
 				"properties": {
-					"typeEnable": {
-						"type": "boolean"
+					"goodsName": {
+						"type": "string"
 					},
-					"typeParentId": {
-						"type": "number",
-						"format": "double"
+					"goodsOnSale": {
+						"type": "boolean"
 					}
 				},
 				"required": [
-					"typeEnable",
-					"typeParentId"
+					"goodsName",
+					"goodsOnSale"
 				],
 				"type": "object",
 				"description": "Make all properties in T required"
@@ -664,66 +659,6 @@
 				],
 				"type": "object"
 			},
-			"Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__": {
-				"properties": {
-					"typeName": {
-						"type": "string"
-					},
-					"typeImg": {
-						"type": "string"
-					},
-					"typeEnable": {
-						"type": "boolean"
-					},
-					"typeParentId": {
-						"type": "number",
-						"format": "double"
-					},
-					"typeParent": {
-						"$ref": "#/components/schemas/GoodsTypes"
-					},
-					"children": {
-						"items": {
-							"$ref": "#/components/schemas/GoodsTypes"
-						},
-						"type": "array"
-					},
-					"goods": {
-						"items": {
-							"$ref": "#/components/schemas/Goods"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"typeName",
-					"typeEnable",
-					"children",
-					"goods"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_GoodsTypes.id_": {
-				"$ref": "#/components/schemas/Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__",
-				"description": "Construct a type with the properties of T except for those in type K."
-			},
-			"Required_Pick_Goods.goodsName-or-goodsOnSale__": {
-				"properties": {
-					"goodsName": {
-						"type": "string"
-					},
-					"goodsOnSale": {
-						"type": "boolean"
-					}
-				},
-				"required": [
-					"goodsName",
-					"goodsOnSale"
-				],
-				"type": "object",
-				"description": "Make all properties in T required"
-			},
 			"Pick_Goods.Exclude_keyofGoods.id__": {
 				"properties": {
 					"goodsName": {
@@ -812,15 +747,70 @@
 			"Omit_Goods.id_": {
 				"$ref": "#/components/schemas/Pick_Goods.Exclude_keyofGoods.id__",
 				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"Required_Pick_GoodsTypes.typeParentId-or-typeEnable__": {
+				"properties": {
+					"typeEnable": {
+						"type": "boolean"
+					},
+					"typeParentId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"typeEnable",
+					"typeParentId"
+				],
+				"type": "object",
+				"description": "Make all properties in T required"
+			},
+			"Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__": {
+				"properties": {
+					"goods": {
+						"items": {
+							"$ref": "#/components/schemas/Goods"
+						},
+						"type": "array"
+					},
+					"typeName": {
+						"type": "string"
+					},
+					"typeImg": {
+						"type": "string"
+					},
+					"typeEnable": {
+						"type": "boolean"
+					},
+					"typeParentId": {
+						"type": "number",
+						"format": "double"
+					},
+					"typeParent": {
+						"$ref": "#/components/schemas/GoodsTypes"
+					},
+					"children": {
+						"items": {
+							"$ref": "#/components/schemas/GoodsTypes"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"goods",
+					"typeName",
+					"typeEnable",
+					"children"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_GoodsTypes.id_": {
+				"$ref": "#/components/schemas/Pick_GoodsTypes.Exclude_keyofGoodsTypes.id__",
+				"description": "Construct a type with the properties of T except for those in type K."
 			}
 		},
-		"securitySchemes": {
-			"jwt": {
-				"type": "apiKey",
-				"name": "Authorization",
-				"in": "header"
-			}
-		}
+		"securitySchemes": {}
 	},
 	"info": {
 		"title": "tsoa-api",
@@ -950,11 +940,7 @@
 				"tags": [
 					"用户接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "header",
@@ -977,36 +963,19 @@
 							"application/json": {
 								"schema": {
 									"properties": {
-										"data": {
-											"properties": {
-												"menuList": {
-													"items": {
-														"$ref": "#/components/schemas/CreateMenuDto"
-													},
-													"type": "array"
-												},
-												"user": {
-													"$ref": "#/components/schemas/Pick_any.string-or-number-or-any_"
-												}
+										"menuList": {
+											"items": {
+												"$ref": "#/components/schemas/CreateMenuDto"
 											},
-											"required": [
-												"menuList",
-												"user"
-											],
-											"type": "object"
+											"type": "array"
 										},
-										"message": {
-											"type": "string"
-										},
-										"code": {
-											"type": "number",
-											"format": "double"
+										"user": {
+											"$ref": "#/components/schemas/Pick_UserInfo.userId-or-phone-or-userName-or-email-or-createDate-or-status-or-permissionId_"
 										}
 									},
 									"required": [
-										"data",
-										"message",
-										"code"
+										"menuList",
+										"user"
 									],
 									"type": "object"
 								}
@@ -1017,11 +986,7 @@
 				"tags": [
 					"用户接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "header",
@@ -1110,11 +1075,7 @@
 				"tags": [
 					"用户接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1139,11 +1100,7 @@
 				"tags": [
 					"用户接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -1167,11 +1124,7 @@
 				"tags": [
 					"用户接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1256,11 +1209,7 @@
 				"tags": [
 					"用户接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -1296,11 +1245,7 @@
 				"tags": [
 					"公共接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1341,11 +1286,7 @@
 				"tags": [
 					"公共接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1405,11 +1346,7 @@
 				"tags": [
 					"权限管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"description": "查询参数",
@@ -1460,11 +1397,7 @@
 				"tags": [
 					"权限管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"description": "权限信息",
@@ -1515,11 +1448,7 @@
 				"tags": [
 					"权限管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"description": "权限更新数据",
@@ -1586,11 +1515,7 @@
 				"tags": [
 					"权限管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"description": "权限ID",
@@ -1638,11 +1563,7 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": []
 			}
 		},
@@ -1704,19 +1625,12 @@
 								}
 							}
 						}
-					},
-					"400": {
-						"description": "Bad Request"
 					}
 				},
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1750,11 +1664,7 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1787,11 +1697,7 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1826,14 +1732,10 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
-					"required": true,
+					"required": false,
 					"content": {
 						"application/json": {
 							"schema": {
@@ -1855,11 +1757,7 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1900,11 +1798,7 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -1932,371 +1826,7 @@
 				"tags": [
 					"菜单管理"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [
-					{
-						"in": "query",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/goods-type/list": {
-			"post": {
-				"operationId": "GetTypeList",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"data": {
-											"items": {
-												"properties": {
-													"children": {
-														"items": {
-															"properties": {
-																"typeParentId": {
-																	"type": "number",
-																	"format": "double"
-																},
-																"typeEnable": {
-																	"type": "boolean"
-																},
-																"typeImg": {
-																	"type": "string"
-																},
-																"typeName": {
-																	"type": "string"
-																},
-																"id": {
-																	"type": "number",
-																	"format": "double"
-																}
-															},
-															"required": [
-																"typeParentId",
-																"typeEnable",
-																"typeImg",
-																"typeName",
-																"id"
-															],
-															"type": "object"
-														},
-														"type": "array"
-													},
-													"typeParentId": {
-														"type": "number",
-														"format": "double"
-													},
-													"typeEnable": {
-														"type": "boolean"
-													},
-													"typeImg": {
-														"type": "string"
-													},
-													"typeName": {
-														"type": "string"
-													},
-													"id": {
-														"type": "number",
-														"format": "double"
-													},
-													"typeParentName": {
-														"type": "string"
-													}
-												},
-												"required": [
-													"children",
-													"typeParentId",
-													"typeEnable",
-													"typeImg",
-													"typeName",
-													"id",
-													"typeParentName"
-												],
-												"type": "object"
-											},
-											"type": "array"
-										},
-										"code": {
-											"type": "number",
-											"format": "double"
-										}
-									},
-									"required": [
-										"message",
-										"data",
-										"code"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "获取商品类型列表",
-				"tags": [
-					"商品类型接口"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Required_Pick_GoodsTypes.typeParentId-or-typeEnable__"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/goods-type/add": {
-			"post": {
-				"operationId": "AddType",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"data": {
-											"properties": {
-												"typeParentId": {
-													"type": "number",
-													"format": "double"
-												},
-												"typeEnable": {
-													"type": "boolean"
-												},
-												"typeImg": {
-													"type": "string"
-												},
-												"typeName": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"typeParentId",
-												"typeEnable",
-												"typeImg",
-												"typeName",
-												"id"
-											],
-											"type": "object"
-										},
-										"code": {
-											"type": "number",
-											"format": "double"
-										}
-									},
-									"required": [
-										"message",
-										"data",
-										"code"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "添加商品类型",
-				"tags": [
-					"商品类型接口"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/Omit_GoodsTypes.id_"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/goods-type/update": {
-			"post": {
-				"operationId": "UpdateType",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"data": {
-											"properties": {
-												"typeParentId": {
-													"type": "number",
-													"format": "double"
-												},
-												"typeEnable": {
-													"type": "boolean"
-												},
-												"typeImg": {
-													"type": "string"
-												},
-												"typeName": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"typeParentId",
-												"typeEnable",
-												"typeImg",
-												"typeName",
-												"id"
-											],
-											"type": "object"
-										},
-										"code": {
-											"type": "number",
-											"format": "double"
-										}
-									},
-									"required": [
-										"message",
-										"data",
-										"code"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "更新商品类型",
-				"tags": [
-					"商品类型接口"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/GoodsTypes"
-							}
-						}
-					}
-				}
-			}
-		},
-		"/goods-type/delete": {
-			"get": {
-				"operationId": "DeleteType",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"properties": {
-										"message": {
-											"type": "string"
-										},
-										"data": {
-											"properties": {
-												"typeParentId": {
-													"type": "number",
-													"format": "double"
-												},
-												"typeEnable": {
-													"type": "boolean"
-												},
-												"typeImg": {
-													"type": "string"
-												},
-												"typeName": {
-													"type": "string"
-												},
-												"id": {
-													"type": "number",
-													"format": "double"
-												}
-											},
-											"required": [
-												"typeParentId",
-												"typeEnable",
-												"typeImg",
-												"typeName",
-												"id"
-											],
-											"type": "object"
-										},
-										"code": {
-											"type": "number",
-											"format": "double"
-										}
-									},
-									"required": [
-										"message",
-										"data",
-										"code"
-									],
-									"type": "object"
-								}
-							}
-						}
-					}
-				},
-				"description": "删除商品类型",
-				"tags": [
-					"商品类型接口"
-				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",
@@ -2412,11 +1942,7 @@
 				"tags": [
 					"商品接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -2441,11 +1967,7 @@
 				"tags": [
 					"商品接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -2488,11 +2010,7 @@
 				"tags": [
 					"商品接口"
 				],
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -2535,11 +2053,351 @@
 				"tags": [
 					"商品接口"
 				],
-				"security": [
+				"security": [],
+				"parameters": [
 					{
-						"jwt": []
+						"in": "query",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
 					}
+				]
+			}
+		},
+		"/goods-type/list": {
+			"post": {
+				"operationId": "GetTypeList",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"items": {
+												"properties": {
+													"children": {
+														"items": {
+															"properties": {
+																"typeParentId": {
+																	"type": "number",
+																	"format": "double"
+																},
+																"typeEnable": {
+																	"type": "boolean"
+																},
+																"typeImg": {
+																	"type": "string"
+																},
+																"typeName": {
+																	"type": "string"
+																},
+																"id": {
+																	"type": "number",
+																	"format": "double"
+																}
+															},
+															"required": [
+																"typeParentId",
+																"typeEnable",
+																"typeImg",
+																"typeName",
+																"id"
+															],
+															"type": "object"
+														},
+														"type": "array"
+													},
+													"typeParentId": {
+														"type": "number",
+														"format": "double"
+													},
+													"typeEnable": {
+														"type": "boolean"
+													},
+													"typeImg": {
+														"type": "string"
+													},
+													"typeName": {
+														"type": "string"
+													},
+													"id": {
+														"type": "number",
+														"format": "double"
+													},
+													"typeParentName": {
+														"type": "string"
+													}
+												},
+												"required": [
+													"children",
+													"typeParentId",
+													"typeEnable",
+													"typeImg",
+													"typeName",
+													"id",
+													"typeParentName"
+												],
+												"type": "object"
+											},
+											"type": "array"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "获取商品类型列表",
+				"tags": [
+					"商品类型接口"
 				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Required_Pick_GoodsTypes.typeParentId-or-typeEnable__"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods-type/add": {
+			"post": {
+				"operationId": "AddType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"properties": {
+												"typeParentId": {
+													"type": "number",
+													"format": "double"
+												},
+												"typeEnable": {
+													"type": "boolean"
+												},
+												"typeImg": {
+													"type": "string"
+												},
+												"typeName": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"typeParentId",
+												"typeEnable",
+												"typeImg",
+												"typeName",
+												"id"
+											],
+											"type": "object"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "添加商品类型",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/Omit_GoodsTypes.id_"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods-type/update": {
+			"post": {
+				"operationId": "UpdateType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"properties": {
+												"typeParentId": {
+													"type": "number",
+													"format": "double"
+												},
+												"typeEnable": {
+													"type": "boolean"
+												},
+												"typeImg": {
+													"type": "string"
+												},
+												"typeName": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"typeParentId",
+												"typeEnable",
+												"typeImg",
+												"typeName",
+												"id"
+											],
+											"type": "object"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "更新商品类型",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/GoodsTypes"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/goods-type/delete": {
+			"get": {
+				"operationId": "DeleteType",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"message": {
+											"type": "string"
+										},
+										"data": {
+											"properties": {
+												"typeParentId": {
+													"type": "number",
+													"format": "double"
+												},
+												"typeEnable": {
+													"type": "boolean"
+												},
+												"typeImg": {
+													"type": "string"
+												},
+												"typeName": {
+													"type": "string"
+												},
+												"id": {
+													"type": "number",
+													"format": "double"
+												}
+											},
+											"required": [
+												"typeParentId",
+												"typeEnable",
+												"typeImg",
+												"typeName",
+												"id"
+											],
+											"type": "object"
+										},
+										"code": {
+											"type": "number",
+											"format": "double"
+										}
+									},
+									"required": [
+										"message",
+										"data",
+										"code"
+									],
+									"type": "object"
+								}
+							}
+						}
+					}
+				},
+				"description": "删除商品类型",
+				"tags": [
+					"商品类型接口"
+				],
+				"security": [],
 				"parameters": [
 					{
 						"in": "query",

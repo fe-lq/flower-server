@@ -3,7 +3,6 @@ import { publicServers } from '../services/public';
 import {
   Post,
   Delete,
-  Security,
   Tags,
   Route,
   Response,
@@ -20,7 +19,6 @@ interface UploadResponse {
 }
 
 @Tags('公共接口')
-@Security('jwt')
 @Route('public')
 export class PublicController extends Controller {
   /**

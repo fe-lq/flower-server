@@ -1,10 +1,9 @@
 import { goodsServers } from '../services/goods';
 import { publicServers } from '../services/public';
-import { Controller, Security, Route, Tags, Post, Get, Body, Query } from '@tsoa/runtime';
+import { Controller, Route, Tags, Post, Get, Body, Query } from '@tsoa/runtime';
 import { Goods } from '../types/prismaTypes';
 
 @Tags('商品接口')
-@Security('jwt')
 @Route('goods')
 export class GoodsController extends Controller {
   @Post('getList')

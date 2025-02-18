@@ -1,7 +1,6 @@
 import { menuServers } from '../services/menu';
 import { publicServers } from '../services/public';
 import {
-  Security,
   Route,
   Tags,
   Get,
@@ -13,14 +12,11 @@ import {
   Query
 } from '@tsoa/runtime';
 import { fileMiddles } from '../middleware/file-middle';
-import { genVerifyParams } from '../middleware/validator-middle';
-import { addMenuSchema } from '../constants/validate-rules';
 import { checkMenuMiddle } from '../middleware/menu-middle';
 import { CreateMenuDto, UpdateMenuDto } from '../dto/menu.dto';
 import { Controller } from '@tsoa/runtime';
 
 @Tags('菜单管理')
-@Security('jwt')
 @Route('menu')
 export class MenuController extends Controller {
   // 获取图标
@@ -33,7 +29,6 @@ export class MenuController extends Controller {
   @Post('icon/upload')
   @Middlewares(fileMiddles())
   @Response(200, 'Success')
-  @Response(400, 'Bad Request')
   async uploadIcon(@UploadedFile() file: Express.Multer.File) {
     const ossFile = await publicServers.putOssFile(`icons/${file.originalname}`, file.path);
     return {
@@ -52,20 +47,20 @@ export class MenuController extends Controller {
 
   // 添加菜单项
   @Post('add')
-  @Middlewares([genVerifyParams(addMenuSchema), checkMenuMiddle])
+  @Middlewares(checkMenuMiddle)
   async addMenuItem(@Body() data: CreateMenuDto) {
     await menuServers.addMenu(data);
   }
 
   // 获取菜单列表
   @Post('list')
-  async getMenuList(@Body() data: CreateMenuDto) {
+  async getMenuList(@Body() data?: CreateMenuDto) {
     return await menuServers.getMenuList(data);
   }
 
   // 更新菜单项
   @Post('update')
-  @Middlewares([genVerifyParams(addMenuSchema), checkMenuMiddle])
+  @Middlewares(checkMenuMiddle)
   async updateMenuItem(@Body() data: CreateMenuDto & { id: number }) {
     await menuServers.updateMenu(data);
   }

@@ -5,10 +5,10 @@ import {
   Post,
   Query,
   Route,
-  Security,
   Header,
-  Hidden,
-  Tags
+  // Hidden,
+  Tags,
+  Hidden
 } from '@tsoa/runtime';
 import { userServers } from '../services/user';
 import { JWT_SECRET_KEY, TOKEN_EXPIRED_TIME } from '../constants';
@@ -18,6 +18,23 @@ import { omit } from 'lodash';
 import { menuServers } from '../services/menu';
 import { redisClient } from '../redis';
 import { LoginRequest, CreateUserDto, SearchParams } from '../dto/user.dto';
+
+/**
+ * @description 用户信息接口
+ */
+interface UserInfo {
+  userId: number;
+  userName: string;
+  password: string;
+  phone: string;
+  email?: string;
+  /**
+   * @format date-time
+   */
+  createDate?: Date;
+  status: boolean;
+  permissionId?: number;
+}
 
 @Tags('用户接口')
 @Route('users')
@@ -68,32 +85,24 @@ export class UserController extends Controller {
   }
 
   @Get('logout')
-  @Security('jwt')
   async loginOut(@Header('authorization') token: string) {
     const { user, exp, iat } = await this.getUserByToken(token);
     await redisClient.setValue(token, user.phone, exp - iat);
   }
 
   @Get('info')
-  @Security('jwt')
   async getUserInfo(@Header('authorization') token: string) {
     const { user } = await this.getUserByToken(token);
     const menuList = await menuServers.getPermMenus({
       permissionId: user.permissionId === 1 ? undefined : user.permissionId
     });
-
     return {
-      code: 0,
-      message: 'success',
-      data: {
-        user: omit(user, 'password'),
-        menuList
-      }
+      user: omit(user, 'password'),
+      menuList
     };
   }
 
   @Post('list')
-  @Security('jwt')
   async getUserList(@Body() searchParams: SearchParams) {
     const data = await userServers.getUserList(searchParams);
 
@@ -104,13 +113,11 @@ export class UserController extends Controller {
   }
 
   @Get('delete')
-  @Security('jwt')
   async deleteUser(@Query() userId: string) {
     await userServers.deleteUser(Number(userId));
   }
 
   @Post('update')
-  @Security('jwt')
   async updateUser(@Body() requestParams: Partial<CreateUserDto> & { userId: number }) {
     const pwdHex = getPasswordHash(requestParams.password);
     await userServers.updateUser({
@@ -121,7 +128,6 @@ export class UserController extends Controller {
   }
 
   @Get('read')
-  @Security('jwt')
   async getUserDetail(@Query() userId: number) {
     const data = await userServers.getUserDetail({
       userId: Number(userId)
@@ -132,7 +138,11 @@ export class UserController extends Controller {
   }
 
   @Hidden()
-  async getUserByToken(token: string): Promise<any> {
+  async getUserByToken(token: string): Promise<{
+    user: UserInfo;
+    exp: number;
+    iat: number;
+  }> {
     const { password, phone, exp, iat } = JWT.verify(
       token.split(' ')[1],
       JWT_SECRET_KEY

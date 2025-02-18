@@ -1,6 +1,5 @@
 import { createClient } from 'redis';
 // import { logger } from '../logs';
-
 const client = createClient({ url: process.env.REDIS_URL });
 /**
  * 使用redis存储一些临时值

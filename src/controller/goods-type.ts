@@ -1,12 +1,10 @@
 import { goodsTypeServers } from '../services/goods-type';
 import { omit } from 'lodash';
-import { Controller, Security, Route, Tags, Post, Get, Body, Query } from '@tsoa/runtime';
+import { Controller, Route, Tags, Post, Get, Body, Query, Middlewares } from '@tsoa/runtime';
 import { GoodsTypes } from '../types/prismaTypes';
 import { validateGoodsType, validateGoodsTypeUpdate } from '../middleware/goods-type';
-import { Validate } from 'class-validator';
 
 @Tags('商品类型接口')
-@Security('jwt')
 @Route('goods-type')
 export class GoodsTypeController extends Controller {
   /**
@@ -33,7 +31,7 @@ export class GoodsTypeController extends Controller {
    * @param requestParams
    */
   @Post('add')
-  @Validate(validateGoodsType)
+  @Middlewares(validateGoodsType)
   async addType(@Body() requestParams: Omit<GoodsTypes, 'id'>) {
     const res = await goodsTypeServers.addType(requestParams);
     return {
@@ -48,7 +46,7 @@ export class GoodsTypeController extends Controller {
    * @param requestParams
    */
   @Post('update')
-  @Validate(validateGoodsType)
+  @Middlewares(validateGoodsType)
   async updateType(@Body() requestParams: GoodsTypes) {
     const res = await goodsTypeServers.updateType(requestParams);
     return {
@@ -63,7 +61,7 @@ export class GoodsTypeController extends Controller {
    * @param id
    */
   @Get('delete')
-  @Validate(validateGoodsTypeUpdate)
+  @Middlewares(validateGoodsTypeUpdate)
   async deleteType(@Query() id: number) {
     const res = await goodsTypeServers.deleteType(Number(id));
     return {

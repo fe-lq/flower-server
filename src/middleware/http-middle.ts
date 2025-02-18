@@ -2,21 +2,20 @@ import type Koa from 'koa';
 import { v1 as uuid } from 'uuid';
 import { logger } from '../logs';
 import body from 'koa-body';
-import KoaJwt from 'koa-jwt';
 import JWT from 'jsonwebtoken';
 import {
-  FORBIDDEN,
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
   JWT_SECRET_KEY,
   JWT_WHITE_LIST,
   TOKEN_EXPIRED_TIME,
-  TOKEN_REFRESH_TIME,
-  UNAUTHORIZED
+  TOKEN_REFRESH_TIME
 } from '../constants';
-import { emitError } from '../utils/error';
 import { redisClient } from '../redis';
 import { userController } from '../controller/user';
 import { ValidateError } from 'tsoa';
-
+import KoaJwt from 'koa-jwt';
+import { removeNullsDeep } from '../utils';
 /**
  * 请求日志
  * @param ctx
@@ -45,13 +44,7 @@ export const corsMiddleware = async (ctx: Koa.Context, next: Koa.Next) => {
     'Access-Control-Max-Age': '3600', // 预检请求有效期1小时
     'X-Request-Id': uuid()
   });
-  try {
-    await next();
-  } catch (error) {
-    // 没权限拦截
-    ctx.status = error.status || 500;
-    emitError(ctx, error, error.status);
-  }
+  await next();
 };
 
 /**
@@ -65,62 +58,56 @@ export const parseBodyMiddle = body({
 });
 
 /**
- * 鉴权
- * @param ctx
- * @param next
+ * JWT认证中间件
  */
-export const jwtAuthMiddle = KoaJwt({
-  secret: JWT_SECRET_KEY
-}).unless({
-  // jwt白名单
-  path: JWT_WHITE_LIST,
-  method: ['OPTIONS']
-});
+export const jwtAuthMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
+  const authMiddleware = KoaJwt({
+    secret: JWT_SECRET_KEY,
+    isRevoked: async (ctx) => {
+      const token = ctx.header.authorization;
+      // 检查token是否在黑名单中
+      const errorToken = await redisClient.getValue(token);
+      if (errorToken) {
+        ctx.state.jwtError = 'token已失效';
+        return true;
+      }
 
-/**
- * 验证token中间件
- * 主要功能：
- * 1. 白名单请求直接放行
- * 2. 检查token是否在黑名单中（已退出的token）
- * 3. 验证用户是否存在
- * 4. 处理token续签逻辑
- */
-export const validateTokenMiddle = async (ctx: Koa.Context, next: Koa.Next) => {
-  const token = ctx.header.authorization;
+      try {
+        const { user, exp } = await userController.getUserByToken(token);
+        if (!user) {
+          ctx.state.jwtError = '当前用户不存在';
+          return true;
+        }
 
-  // 白名单和OPTIONS请求直接放行
-  if (JWT_WHITE_LIST.some((item) => item.test(ctx.url)) || ctx.method === 'OPTIONS') {
-    return await next();
-  }
+        // token续签逻辑
+        const currentTime = new Date().getTime() / 1000;
+        const remainingTime = exp - currentTime;
+
+        if (remainingTime < TOKEN_REFRESH_TIME) {
+          await handleTokenRefresh(ctx, user);
+        }
+
+        return false;
+      } catch (err) {
+        ctx.state.jwtError = 'token无效';
+        return true;
+      }
+    }
+  }).unless({
+    path: JWT_WHITE_LIST,
+    method: ['OPTIONS']
+  });
 
   try {
-    if (!token) {
-      return emitError(ctx, { message: '未提供认证令牌' }, UNAUTHORIZED);
-    }
-
-    // 检查token是否在黑名单中
-    const errorToken = await redisClient.getValue(token);
-    if (errorToken) {
-      return emitError(ctx, { message: 'token已失效' }, UNAUTHORIZED);
-    }
-
-    // 验证用户信息
-    const { user, exp } = await userController.getUserByToken(token);
-    if (!user) {
-      return emitError(ctx, { message: '当前用户不存在' }, FORBIDDEN);
-    }
-
-    // token续签逻辑
-    const currentTime = new Date().getTime() / 1000;
-    const remainingTime = exp - currentTime;
-
-    if (remainingTime < TOKEN_REFRESH_TIME) {
-      await handleTokenRefresh(ctx, user);
-    }
-
-    await next();
-  } catch (error) {
-    emitError(ctx, error);
+    await authMiddleware(ctx, async () => {
+      await next();
+    });
+  } catch (err: any) {
+    ctx.status = 401;
+    ctx.body = {
+      code: -1,
+      message: ctx.state.jwtError || (err.message === 'jwt expired' ? 'token已失效' : 'token不存在')
+    };
   }
 };
 
@@ -154,11 +141,13 @@ async function handleTokenRefresh(ctx: Koa.Context, user: any) {
 export const responseFormatter = async (ctx: Koa.Context, next: Koa.Next) => {
   try {
     await next();
-    if (ctx.body && !ctx.response.headerSent) {
+    // 直接处理 ctx.body
+    if (!ctx.response.headerSent && ctx.body !== undefined) {
+      const originalBody = ctx.body;
       ctx.body = {
-        code: 200,
-        message: 'ok',
-        data: ctx.body
+        code: 0,
+        message: 'success',
+        data: originalBody
       };
     }
   } catch (error: any) {
@@ -168,17 +157,36 @@ export const responseFormatter = async (ctx: Koa.Context, next: Koa.Next) => {
         acc[key] = error.fields[key].message;
         return acc;
       }, {});
+      ctx.status = BAD_REQUEST;
       ctx.body = {
-        code: error.status,
+        code: -1,
         message: '参数错误',
         errors: fields
       };
     } else {
+      ctx.status = error.status || INTERNAL_SERVER_ERROR;
       ctx.body = {
-        code: error.status || 500,
+        code: -1,
         message: error.message || 'Internal server error',
-        errors: error.errors || []
+        errors: error.errors
       };
     }
+  }
+};
+
+/**
+ * 过滤返回数据null的key
+ * @param ctx
+ * @param next
+ */
+export const filterNullKey = async (ctx: Koa.Context, next: Koa.Next) => {
+  try {
+    await next();
+    if (ctx.body) {
+      ctx.body = removeNullsDeep(ctx.body);
+    }
+  } catch (error) {
+    logger.error(error);
+    throw error;
   }
 };

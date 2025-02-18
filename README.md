@@ -105,6 +105,11 @@ localhost: 本地数据库启动的域名，线上的数据库域名可替换
 */
 DATABASE_URL = "mysql://root:12345678@localhost:3306/my_db_admin";
 ```
+配置redis环境变量
+
+```typescript
+REDIS_URL=redis://127.0.0.1:6379
+```
 
 其他数据库类型的连接方式可参考 [这里](*https://pris.ly/d/connection-strings*)
 

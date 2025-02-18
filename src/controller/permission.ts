@@ -1,9 +1,8 @@
 import { PermissionDto } from '../dto/permission.dto';
 import { permissionServer } from '../services/permission';
-import { Get, Post, Route, Tags, Security, Body, Query, Response, Controller } from '@tsoa/runtime';
+import { Get, Post, Route, Tags, Body, Query, Response, Controller } from '@tsoa/runtime';
 
 @Tags('权限管理')
-@Security('jwt')
 @Route('permission')
 export class PermController extends Controller {
   /**

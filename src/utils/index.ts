@@ -28,3 +28,25 @@ export const genEncryptPsw = (password: string) => {
 
   return bytes;
 };
+
+/**
+ * 递归过滤null的key
+ * @param obj
+ * @returns
+ */
+export const removeNullsDeep = (obj: any): any => {
+  if (obj === null || typeof obj !== 'object') {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((item) => removeNullsDeep(item));
+  }
+  const cleaned: Record<string, any> = {};
+  for (const key in obj) {
+    const value = obj[key];
+    if (value !== null) {
+      cleaned[key] = removeNullsDeep(value);
+    }
+  }
+  return cleaned;
+};

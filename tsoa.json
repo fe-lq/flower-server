@@ -1,30 +1,23 @@
 {
   "entryFile": "src/index.ts",
   "noImplicitAdditionalProperties": "throw-on-extras",
-  "controllerPathGlobs": [
-    "src/controller/user.ts",
-    "src/controller/public.ts",
-    "src/controller/permission.ts",
-    "src/controller/menu.ts",
-    "src/controller/goods-type.ts",
-    "src/controller/goods.ts"
-  ],
+  "controllerPathGlobs": ["src/controller/*.ts"],
   "spec": {
     "outputDirectory": "api-doc",
     "specVersion": 3,
     "name": "tsoa-api",
-    "securityDefinitions": {
-      "jwt": {
-        "type": "apiKey",
-        "name": "Authorization",
-        "in": "header"
+    "components": {
+      "schemas": {
+        "Date": {
+          "type": "string",
+          "format": "date-time"
+        }
       }
     }
   },
   "routes": {
     "middleware": "koa",
     "routesDir": "src/routers",
-    "routesFileName": "index.ts",
-    "authenticationModule": "./src/middleware/authentication.ts"
+    "routesFileName": "index.ts"
   }
 }

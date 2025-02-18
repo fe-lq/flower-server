@@ -6,15 +6,13 @@ import koaBody from 'koa-body';
  * @returns
  */
 export function fileMiddles() {
-  return [
-    koaBody({
-      multipart: true,
-      formidable: {
-        keepExtensions: true,
-        filename: (name, ext) => {
-          return `${name}${ext}`;
-        }
+  return koaBody({
+    multipart: true,
+    formidable: {
+      keepExtensions: true,
+      filename: (name, ext) => {
+        return `${name}${ext}`;
       }
-    })
-  ];
+    }
+  });
 }

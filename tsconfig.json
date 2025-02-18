@@ -10,12 +10,11 @@
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "outDir": "./dist",
-    "strict": false
   },
   "ts-node": {
     "esm": true,
   },
   "include": ["src"],
   "exclude": ["node_modules"],
-  "types": ["@prisma+client"]
+  "types": ["@prisma+client", "node"]
 }
